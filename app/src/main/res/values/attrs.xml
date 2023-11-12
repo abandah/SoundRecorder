@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<declare-styleable name="ChipsView">
+		<attr name="chipColor" format="color" />
+		<attr name="chipRadius" format="dimension" />
+		<attr name="rippleColor" format="color" />
+		<attr name="borderColor" format="color" />
+		<attr name="borderWidth" format="dimension" />
+		<attr name="chipTextSize" format="dimension" />
+		<attr name="chipPadding" format="dimension" />
+		<attr name="chipMargin" format="dimension" />
+		<attr name="chipTextColor" format="color" />
+		<attr name="chipTextSelectedColor" format="color" />
+		<attr name="orderEffective" format="boolean" />
+		<attr name="multiSelect" format="boolean" />
+	</declare-styleable>
+
+</resources>

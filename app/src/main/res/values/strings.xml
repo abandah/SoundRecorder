@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="import_progress">Audio file import&#8230;</string>
+    <string name="record_processing">Waveform drawing calculations&#8230;</string>
+    <string name="zero_time">00:00</string>
+    <string name="settings">Settings</string>
+    <string name="delete">Delete</string>
+    <string name="recording">Recording: %s</string>
+    <string name="keep_screen_on">Keep screen ON while recording</string>
+    <string name="recording_format">Recording format:</string>
+    <string name="sample_rate">Sample rate:</string>
+    <string name="value_kbps">%d kbps</string>
+
+
+    <string-array name="formats2">
+        <item>pcm</item>
+        <item>acc</item>
+    </string-array>
+
+
+    <string-array name="sample_rates2">
+        <item>8kHz</item>
+        <item>16kHz</item>
+        <item>22kHz</item>
+        <item>32kHz</item>
+        <item>44.1kHz</item>
+        <item>48kHz</item>
+    </string-array>
+
+    <string-array name="bit_rates2">
+        <!--		<item>24 kbps</item>-->
+        <item>48 kbps</item>
+        <item>96 kbps</item>
+        <item>128 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+    </string-array>
+
+    <string-array name="channels">
+        <item>Stereo</item>
+        <item>Mono</item>
+    </string-array>
+
+    <string name="size">%s Mb</string>
+    <string name="send_sample_to_server">Send Sample To Server</string>
+    <string name="delay">Delay</string>
+
+</resources>

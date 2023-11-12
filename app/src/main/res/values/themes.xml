@@ -1,0 +1,44 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MyApplication" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:colorPrimary">@color/md_blue_gray_700</item>
+        <item name="android:colorPrimaryDark">@color/md_blue_gray_700</item>
+        <item name="android:colorAccent">@color/md_yellow_A700</item>
+
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+
+        <item name="android:windowBackground">@drawable/gradient_gray</item>
+
+        <item name="android:navigationBarColor">@color/md_blue_gray_700</item>
+    </style>
+
+    <style name="Theme.MyApplication" parent="Base.Theme.MyApplication" />
+
+
+    <style name="Widget.Button.Toggle" parent="android:Widget">
+        <item name="android:background">@drawable/ic_record_toggle_bg</item>
+        <item name="android:disabledAlpha">?android:attr/disabledAlpha</item>
+    </style>
+
+    <style name="toggleButton"  parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:buttonStyleToggle">@style/Widget.Button.Toggle</item>
+        <item name="android:textOn"></item>
+        <item name="android:textOff"></item>
+    </style>
+
+    <style name="Text">
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+    <style name="Text.NormalLabel" parent="Text">
+        <item name="android:textSize">@dimen/text_large</item>
+    </style>
+
+    <style name="Text.SectionLabel">
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">@dimen/text_xlarge</item>
+    </style>
+</resources>
