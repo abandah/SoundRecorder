@@ -220,6 +220,20 @@
 
             </LinearLayout>
 
+            <ImageButton
+                android:layout_width="@dimen/bottom_pnl_btn_size"
+                android:layout_height="@dimen/bottom_pnl_btn_size"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:adjustViewBounds="true"
+                android:visibility="@{viewModel.isAdmin ? View.VISIBLE : View.GONE}"
+                android:background="?android:selectableItemBackgroundBorderless"
+                android:layout_gravity="end"
+                android:clickable="true"
+                android:contentDescription="@string/settings"
+                android:onClick="@{viewModel::onAdminClick}"
+                android:focusable="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/baseline_admin_panel_settings_24" />
 
         </FrameLayout>
 

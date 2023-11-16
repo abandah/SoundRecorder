@@ -14,6 +14,10 @@
         <item name="android:navigationBarColor">@color/md_blue_gray_700</item>
     </style>
 
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@drawable/gradient_gray</item>
+    </style>
+
     <style name="Theme.MyApplication" parent="Base.Theme.MyApplication" />
 
 
@@ -40,5 +44,35 @@
         <item name="android:textColor">@color/text_primary_light</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textSize">@dimen/text_xlarge</item>
+    </style>
+
+    <style name="Text.Lable">
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">@dimen/text_normal</item>
+    </style>
+    <style name="Widget.BorderlessButton" parent="@android:style/Widget.Material.Button.Borderless">
+        <item name="android:textColor">#414141</item>
+        <item name="android:letterSpacing">0.025</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:paddingTop">@dimen/spacing_medium</item>
+        <item name="android:paddingBottom">@dimen/spacing_medium</item>
+        <item name="android:background">@drawable/button_translucent</item>
+    </style>
+
+    <style name="Widget.RaisedButton" parent="@android:style/Widget.Material.Button">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#414141</item>
+        <item name="android:background">@drawable/raised_button_background</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:letterSpacing">0.025</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/text_xmedium</item>
+        <item name="android:paddingStart">@dimen/spacing_double</item>
+        <item name="android:paddingEnd">@dimen/spacing_double</item>
+        <item name="android:paddingTop">@dimen/spacing_medium</item>
+        <item name="android:paddingBottom">@dimen/spacing_medium</item>
     </style>
 </resources>

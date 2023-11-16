@@ -10,6 +10,7 @@
     <string name="recording_format">Recording format:</string>
     <string name="sample_rate">Sample rate:</string>
     <string name="value_kbps">%d kbps</string>
+    <string name="edit">Edit</string>
 
 
     <string-array name="formats2">
@@ -44,5 +45,8 @@
     <string name="size">%s Mb</string>
     <string name="send_sample_to_server">Send Sample To Server</string>
     <string name="delay">Delay</string>
+    <string name="username">Username</string>
+    <string name="login">Login</string>
+    <string name="userDetails">User Details</string>
 
 </resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "998763699094",
+    "project_id": "soundrecorder-ece09",
+    "storage_bucket": "soundrecorder-ece09.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:998763699094:android:a572836ad14edd9f569bb7",
+        "android_client_info": {
+          "package_name": "com.playback.soundrec"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoNO2bxwnIMS0nADfBPsIS0Pppl5LerOI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

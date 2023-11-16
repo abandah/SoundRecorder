@@ -1,6 +1,7 @@
 package com.playback.soundrec.ui.main
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.media.AudioFormat
 import android.media.AudioManager
@@ -21,7 +22,10 @@ import com.playback.soundrec.Pref
 import com.playback.soundrec.bases.BaseActivity
 import com.playback.soundrec.R
 import com.playback.soundrec.databinding.ActivityMainBinding
+import com.playback.soundrec.providers.FireBaseService
+import com.playback.soundrec.ui.login.LoginActivity
 import com.playback.soundrec.ui.settings.SettingsActivity
+import com.playback.soundrec.ui.userdetails.UserDetailsActivity
 import com.playback.soundrec.widget.WaveformView
 import java.io.File
 import java.io.FileOutputStream
@@ -49,15 +53,30 @@ class MainActivity : BaseActivity(), MainActivityNav {
 
     }
     override fun onCreate(savedInstanceState: Bundle?) {
+        FireBaseService.INSTANCE?.let {fi ->
+            fi.getUserInfo(Pref.getInstance().getUser()!!.id!!){
+                if (it != null) {
+                    Pref.getInstance().saveUser(it)
+                    binding = ActivityMainBinding.inflate(layoutInflater)
+                    viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+                    binding?.viewModel = viewModel
+                    binding?.lifecycleOwner = this
+                    viewModel?.mainActivityNav = this
+                    viewModel?.isAdmin?.value = it.isAdmin
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
-        binding?.viewModel = viewModel
-        binding?.lifecycleOwner = this
-        viewModel?.mainActivityNav = this
+                    setContentView(binding?.root)
+                    super.onCreate(savedInstanceState)
+                }
+                else{
+                    Pref.getInstance().saveUser(null)
+                    val  i = Intent(this, LoginActivity::class.java)
+                    startActivity(i)
+                    finish()
+                }
+            }
+        }
 
-        setContentView(binding?.root)
-        super.onCreate(savedInstanceState)
+
 
 
     }
@@ -382,5 +401,10 @@ class MainActivity : BaseActivity(), MainActivityNav {
     override fun onExitClick(view: View) {
         this.finishAffinity();
 
+    }
+
+    override fun onAdminClick(view: View) {
+        val intent = Intent(this, UserDetailsActivity::class.java)
+        startActivity(intent)
     }
 }

@@ -7,6 +7,7 @@ import com.playback.soundrec.bases.BaseViewModel
 
 class MainActivityViewModel : BaseViewModel() {
     var isRecording: MutableLiveData<Boolean> = MutableLiveData(false)
+    var isAdmin: MutableLiveData<Boolean> = MutableLiveData(false)
     var recordInfo: MutableLiveData<String> = MutableLiveData("")
     var progressTime: MutableLiveData<String> = MutableLiveData("")
 
@@ -23,6 +24,11 @@ class MainActivityViewModel : BaseViewModel() {
 
     fun onExitClick(view: View) {
         mainActivityNav?.onExitClick(view)
+
+    }
+
+    fun onAdminClick(view: View) {
+        mainActivityNav?.onAdminClick(view)
 
     }
 }

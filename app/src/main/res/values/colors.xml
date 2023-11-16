@@ -12,5 +12,6 @@
     <color name="white_transparent_10">#E6FFFFFF</color>
     <color name="white_transparent_20">#CDFFFFFF</color>
     <color name="white_transparent_80">#32FFFFFF</color>
+    <color name="highlight_light">#A1FFFFFF</color>
 
 </resources>

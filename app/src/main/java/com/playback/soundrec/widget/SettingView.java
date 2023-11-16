@@ -22,7 +22,7 @@ public class SettingView extends LinearLayout {
 	private ChipsView chipsView;
 	private TextView txtTitle;
 	private ImageButton btnInfo;
-	private ImageView imgInfo;
+	//private ImageView imgInfo;
 
 	public SettingView(@NonNull Context context) {
 		super(context);
@@ -51,7 +51,7 @@ public class SettingView extends LinearLayout {
 		chipsView = findViewById(R.id.chips_view);
 		txtTitle = findViewById(R.id.setting_title);
 		btnInfo = findViewById(R.id.setting_btn_info);
-		imgInfo = findViewById(R.id.setting_image);
+		//imgInfo = findViewById(R.id.setting_image);
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class SettingView extends LinearLayout {
 	}
 
 	public void setImageInfo(int imgRes) {
-		imgInfo.setImageResource(imgRes);
+		//imgInfo.setImageResource(imgRes);
 	}
 
 	public void setEnabled(boolean enabled) {

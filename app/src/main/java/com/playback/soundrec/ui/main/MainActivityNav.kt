@@ -7,4 +7,5 @@ interface MainActivityNav {
     fun onRecordClick(view: View)
 
     fun onExitClick(view: View)
+    fun onAdminClick(view: View)
 }

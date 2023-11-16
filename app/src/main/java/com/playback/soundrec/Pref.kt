@@ -2,6 +2,8 @@ package com.playback.soundrec
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.Gson
+import com.playback.soundrec.model.User
 
 class Pref {
 
@@ -14,13 +16,12 @@ class Pref {
             }
             return INSTANCE!!
         }
-
-        var defaultSampleRate = "44100"
-        var defaultFormat = AppConstants.FORMAT_PCM
-        var defaultEnableSendDataToServer = false
-        var defaultDelay = "0"
-        var defaultTimeToStartSoundSample = "0"
-        var defaultSoundSampleDuration = "5"
+        var defaultSampleRate : String = "44100"
+        var defaultFormat: String = AppConstants.FORMAT_AAC
+        var defaultEnableSendDataToServer : Boolean= false
+        var defaultDelay: String = "0"
+        var defaultTimeToStartSoundSample: String = "0"
+        var defaultSoundSampleDuration : String= "5"
 
     }
     init {
@@ -80,5 +81,22 @@ class Pref {
     }
     fun getSoundSampleDuration() : Int{
         return getString("sound_sample_duration" , defaultSoundSampleDuration)!!.toInt()
+    }
+
+    fun saveUser(user: User?){
+        if(user == null){
+            setString("user", "")
+            return
+        }
+        val string = Gson().toJson(user)
+        setString("user", string)
+
+    }
+    fun getUser() : User?{
+        val string = getString("user", "")
+        if(string.isNullOrEmpty()){
+            return null
+        }
+        return Gson().fromJson(string, User::class.java)
     }
 }
