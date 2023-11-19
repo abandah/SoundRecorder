@@ -18,6 +18,7 @@
     <dimen name="text_large">20sp</dimen>
     <dimen name="spacing_tiny">4dp</dimen>
     <dimen name="border">2dp</dimen>
+    <dimen name="spacing_xnormal">24dp</dimen>
 
 
 </resources>

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -132,15 +133,21 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
 //        }
         delay = binding?.llDelay
         delay?.setOnClickListener { viewbt ->
+
+            val container = layoutInflater.inflate(R.layout.view_et, null) as LinearLayout
             var view: View? = null
 
-            view = EditText(this)
-                .apply { setText(binding?.tvDelay?.text.toString()) }
+        //    val container = layoutInflater.inflate(R.layout.line, null)
+            view = container?.findViewById<EditText>(R.id.et_content)
+                ?.apply {
+                    setText(binding?.tvDelay?.text.toString())
+                    inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                }
 
             // val editText = EditText(this).apply { setText(currentValue) }
             AlertDialog.Builder(this, R.style.MyDialogTheme)
                 .setTitle("Edit delay")
-                .setView(view)
+                .setView(container)
                 .setPositiveButton("Update") { dialog, _ ->
 
                     val newValue = (view as EditText).text.toString()

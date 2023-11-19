@@ -3,6 +3,7 @@ package com.playback.soundrec.ui.userlist
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.playback.soundrec.R
@@ -18,7 +19,7 @@ class UserAdapter(private val itemClickListener: (User) -> Unit) : RecyclerView.
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = users[position]
         holder.itemView.findViewById<TextView>(R.id.textViewUserName).text = user.userName
-        holder.itemView.setOnClickListener { itemClickListener(user) }
+        holder.itemView.findViewById<ImageView>(R.id.imageView2).setOnClickListener { itemClickListener(user) }
     }
 
     override fun getItemCount() = users.size

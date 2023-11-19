@@ -11,6 +11,10 @@
     <string name="sample_rate">Sample rate:</string>
     <string name="value_kbps">%d kbps</string>
     <string name="edit">Edit</string>
+    <string name="warning">Warning!</string>
+    <string name="error_lost_records">Some of your records was deleted or moved</string>
+    <string name="btn_ok">Ok</string>
+    <string name="btn_details">Details</string>
 
 
     <string-array name="formats2">
@@ -48,5 +52,7 @@
     <string name="username">Username</string>
     <string name="login">Login</string>
     <string name="userDetails">User Details</string>
+    <string name="update">Update</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

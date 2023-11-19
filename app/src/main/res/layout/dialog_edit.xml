@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~  Copyright 2019 Dmytro Ponomarenko
+  ~
+  ~  Licensed to the Apache Software Foundation (ASF) under one or more contributor
+  ~  license agreements. See the NOTICE file distributed with this work for
+  ~  additional ic_information regarding copyright ownership. The ASF licenses this
+  ~  file to you under the Apache License, Version 2.0 (the "License"); you may not
+  ~  use this file except in compliance with the License. You may obtain a copy of
+  ~  the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  ~  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+  ~  License for the specific language governing permissions and limitations under
+  ~  the License.
+  -->
+<!--style="@style/Widget.Dialog"-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/spacing_double"
+    android:paddingTop="@dimen/spacing_double"
+    android:paddingEnd="@dimen/spacing_double"
+    android:paddingBottom="@dimen/spacing_xnormal"
+    tools:viewBindingIgnore="true">
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_normal"
+        android:text="@string/warning"
+        android:textAppearance="@style/TextAppearance.DialogTitle"
+        android:textColor="@color/white" />
+
+    <LinearLayout
+        android:id="@+id/dialog_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:layout_marginBottom="@dimen/spacing_normal"
+        android:orientation="vertical"
+        android:textSize="@dimen/text_xmedium" >
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/ll_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_normal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_switch"
+                style="@style/Text.NormalLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_normal"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:layout_marginEnd="@dimen/spacing_normal"
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/outline_send_and_archive_24"
+                android:drawablePadding="@dimen/spacing_normal"
+                android:text="@string/send_sample_to_server" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/sw_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/spacing_xsmall" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/ll_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_normal"
+            android:paddingEnd="@dimen/spacing_normal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_delay"
+                style="@style/Text.NormalLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/spacing_normal"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:layout_marginEnd="@dimen/spacing_normal"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/outline_more_time_24"
+                android:drawablePadding="@dimen/spacing_normal"
+                android:text="@string/delay" />
+
+            <EditText
+                android:id="@+id/ed_delay"
+                style="@style/Text.NormalLabel"
+                android:layout_width="match_parent"
+                android:layout_marginStart="@dimen/spacing_normal"
+                android:layout_marginEnd="@dimen/spacing_normal"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:digits="0123456789"
+                android:maxLength="3"
+                android:text="100" />
+
+            <!--                <com.google.android.material.switchmaterial.SwitchMaterial-->
+            <!--                    android:id="@+id/sendSampleToServer"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_gravity="center_vertical"-->
+            <!--                    android:layout_marginEnd="@dimen/spacing_xsmall" />-->
+        </LinearLayout>
+
+        <com.playback.soundrec.widget.SettingView
+            android:visibility="gone"
+            android:id="@+id/setting_recording_format"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_normal" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/dialog_ok_btn"
+            style="@style/Widget.BorderlessButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:paddingStart="@dimen/spacing_normal"
+            android:paddingLeft="@dimen/spacing_normal"
+            android:paddingEnd="@dimen/spacing_normal"
+            android:paddingRight="@dimen/spacing_normal"
+            android:text="@string/cancel"
+            android:textSize="@dimen/text_normal" />
+
+        <Button
+            android:id="@+id/dialog_details_btn"
+            style="@style/Widget.RaisedButton"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_small"
+            android:paddingStart="@dimen/spacing_normal"
+            android:paddingLeft="@dimen/spacing_normal"
+            android:paddingEnd="@dimen/spacing_normal"
+            android:paddingRight="@dimen/spacing_normal"
+            android:text="@string/update"
+            android:textSize="@dimen/text_normal" />
+
+    </LinearLayout>
+</LinearLayout>

@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.playback.soundrec.AppConstants
 import com.playback.soundrec.R
 import com.playback.soundrec.bases.BaseActivity
@@ -142,32 +144,41 @@ class UserDetailsActivity : BaseActivity() {
         options_key: Array<String>?,
         updateCallback: (String) -> Unit
     ) {
+
+
+        var container :LinearLayout ? = layoutInflater.inflate(R.layout.view_et, null) as LinearLayout
+
         var view: View? = null
         when (type) {
             EditViews.String -> {
-                view = EditText(this)
-                    .apply { setText(currentValue) }
+                container = layoutInflater.inflate(R.layout.view_et, null) as LinearLayout
+                view = container?.findViewById<EditText>(R.id.et_content)?.apply { setText(currentValue) }
             }
 
             EditViews.Int -> {
-                view = EditText(this)
-                    .apply {
+                container = layoutInflater.inflate(R.layout.view_et, null) as LinearLayout
+
+                view = container?.findViewById<EditText>(R.id.et_content)?.apply {
                         setText(currentValue)
                         inputType = android.text.InputType.TYPE_CLASS_NUMBER
                     }
             }
 
             EditViews.Boolean -> {
-                view = Switch(this)
-                    .apply {
-                        setText(title)
+                container = layoutInflater.inflate(R.layout.view_switch, null) as LinearLayout
+
+                val tv = container?.findViewById<TextView>(R.id.tx_switch)?.apply {
+                    setText(title)
+                }
+                view = container?.findViewById<SwitchMaterial>(R.id.et_content)?.apply {
                         isChecked = currentValue.toBoolean()
                     }
             }
 
             EditViews.MULTIABLE -> {
-                view = SettingView(this)
-                    .apply {
+                container = layoutInflater.inflate(R.layout.view_multi, null) as LinearLayout
+
+                view = container?.findViewById<SettingView>(R.id.et_content)?.apply {
                         setData(options_key, options)
                         selected = currentValue
 
@@ -177,7 +188,7 @@ class UserDetailsActivity : BaseActivity() {
         // val editText = EditText(this).apply { setText(currentValue) }
         AlertDialog.Builder(this, R.style.MyDialogTheme)
             .setTitle("Edit $field")
-            .setView(view)
+            .setView(container)
             .setPositiveButton("Update") { dialog, _ ->
                 when (type) {
                     EditViews.String -> {
@@ -193,7 +204,7 @@ class UserDetailsActivity : BaseActivity() {
                     }
 
                     EditViews.Boolean -> {
-                        val newValue = (view as Switch).isChecked.toString()
+                        val newValue = (view as SwitchMaterial).isChecked.toString()
                         updateCallback(newValue)
                         dialog.dismiss()
                     }
