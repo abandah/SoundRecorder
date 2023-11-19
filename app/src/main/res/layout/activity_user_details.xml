@@ -61,29 +61,43 @@
                     android:gravity="start|center_vertical"
                     android:text="Profile" />
 
-
-                <LinearLayout
-                    android:id="@+id/ll_userDetails"
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" />
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="5dp"
+                    android:shadowColor="@color/white"
+                    app:cardBackgroundColor="@android:color/transparent">
+                    <LinearLayout
+                        android:id="@+id/ll_userDetails"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical" />
+                </com.google.android.material.card.MaterialCardView>
+
 
                 <TextView
                     style="@style/Text.SectionLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
-                    android:layout_marginTop="@dimen/spacing_normal"
+                    android:layout_marginTop="@dimen/spacing_double"
                     android:gravity="start|center_vertical"
                     android:text="Settings" />
 
-
-                <LinearLayout
-                    android:layout_marginTop="@dimen/spacing_normal"
-                    android:id="@+id/ll_settings"
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" />
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="5dp"
+                    android:shadowColor="@color/white"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    android:layout_marginBottom="@dimen/spacing_huge">
+                    <LinearLayout
+                        android:id="@+id/ll_settings"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical" />
+                </com.google.android.material.card.MaterialCardView>
+
 
             </LinearLayout>
         </ScrollView>
