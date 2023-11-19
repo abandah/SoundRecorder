@@ -14,18 +14,15 @@ import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.appcompat.widget.AppCompatToggleButton
 import androidx.lifecycle.ViewModelProvider
 import com.playback.soundrec.Pref
 import com.playback.soundrec.bases.BaseActivity
-import com.playback.soundrec.R
 import com.playback.soundrec.databinding.ActivityMainBinding
 import com.playback.soundrec.providers.FireBaseService
 import com.playback.soundrec.ui.login.LoginActivity
 import com.playback.soundrec.ui.settings.SettingsActivity
-import com.playback.soundrec.ui.userdetails.UserDetailsActivity
+import com.playback.soundrec.ui.userlist.UserListActivity
 import com.playback.soundrec.widget.WaveformView
 import java.io.File
 import java.io.FileOutputStream
@@ -53,8 +50,9 @@ class MainActivity : BaseActivity(), MainActivityNav {
 
     }
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         FireBaseService.INSTANCE?.let {fi ->
-            fi.getUserInfo(Pref.getInstance().getUser()!!.id!!){
+            fi.getUserInfo(Pref.getInstance().getUser()!!.user_id!!){
                 if (it != null) {
                     Pref.getInstance().saveUser(it)
                     binding = ActivityMainBinding.inflate(layoutInflater)
@@ -62,10 +60,10 @@ class MainActivity : BaseActivity(), MainActivityNav {
                     binding?.viewModel = viewModel
                     binding?.lifecycleOwner = this
                     viewModel?.mainActivityNav = this
-                    viewModel?.isAdmin?.value = it.isAdmin
+                    viewModel?.isAdmin?.value = it.admin?.toLong() == 1L
 
                     setContentView(binding?.root)
-                    super.onCreate(savedInstanceState)
+
                 }
                 else{
                     Pref.getInstance().saveUser(null)
@@ -84,14 +82,20 @@ class MainActivity : BaseActivity(), MainActivityNav {
     private fun threadLoop() {
         runOnUiThread(
             Runnable {
-                viewModel?.recordInfo?.value = "${Pref.getInstance().getFormat()} " +
-                        ", ${Pref.getInstance().getSampleRate()}KHz " +
-                        "\n with ${Pref.getInstance().getDelay()}s delay"
+                Pref.getInstance().getUser()?.let {
+                    viewModel?.recordInfo?.value = "${it.setting?.defaultFormat} " +
+                            ", ${it.setting?.defaultSampleRate}KHz " +
+                            "\n with ${it.setting?.defaultDelay}s delay"
+                }
+//                viewModel?.recordInfo?.value = "${Pref.getInstance().getFormat()} " +
+//                        ", ${Pref.getInstance().getSampleRate()}KHz " +
+//                        "\n with ${Pref.getInstance().getDelay()}s delay"
             }
         )
 
         // Get the sample rate from the spinner
-        val intRecordSampleRate = Pref.getInstance().getSampleRate().toInt() //AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_SYSTEM)
+      //  val intRecordSampleRate = Pref.getInstance().getSampleRate().toInt() //AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_SYSTEM)
+       val intRecordSampleRate = Pref.getInstance().getUser()?.setting?.defaultSampleRate?.toInt() ?: 44100
         waveformView?.sampleRate=intRecordSampleRate
         waveformView2?.sampleRate =intRecordSampleRate
 
@@ -102,7 +106,8 @@ class MainActivity : BaseActivity(), MainActivityNav {
         )
 
         // Delay time in seconds entered by the user (for example, from an EditText or Spinner).
-        val delayInSeconds = Pref.getInstance().getDelay()  // Default to 5 if input is invalid
+       // val delayInSeconds = Pref.getInstance().getDelay()  // Default to 5 if input is invalid
+        val delayInSeconds = Pref.getInstance().getUser()?.setting?.defaultDelay!!.toLong()  // Default to 5 if input is invalid
         // Calculate the number of buffers needed for the desired delay.
         val buffersNeededForDelay = (intRecordSampleRate * delayInSeconds) / intBufferSize!!
 
@@ -129,8 +134,8 @@ class MainActivity : BaseActivity(), MainActivityNav {
         audioTrack?.play()
 
         val startTime = System.currentTimeMillis()
-        var sampleStartTime = startTime + Pref.getInstance().getTimeToStartSoundSample() * 1000
-        var sampleEndTime = sampleStartTime + Pref.getInstance().getSoundSampleDuration() * 1000
+        var sampleStartTime = startTime + Pref.getInstance().getUser()?.setting?.defaultTimeToStartSoundSample!!.toLong() * 1000
+        var sampleEndTime = sampleStartTime + Pref.getInstance().getUser()?.setting?.defaultSoundSampleDuration!!.toLong() * 1000
         var isSampling = false
         val sampleBuffer = LinkedList<ShortArray>() // Buffer to hold the sound sample
         while (viewModel?.isRecording?.value == true) {
@@ -153,7 +158,7 @@ class MainActivity : BaseActivity(), MainActivityNav {
             waveformView?.setAudioData(tempBuffer)
             if (readSize > 0) {
                 // If it's time to start sampling and sampling is enabled
-                if (!isSampling && Pref.getInstance().getEnableSendDataToServer() && System.currentTimeMillis() >= sampleStartTime) {
+                if (!isSampling && Pref.getInstance().getUser()?.setting?.defaultEnableSendDataToServer?.toLong() == 1L && System.currentTimeMillis() >= sampleStartTime) {
                     isSampling = true
                 }
 
@@ -180,8 +185,9 @@ class MainActivity : BaseActivity(), MainActivityNav {
                     processSampledAudio(sampleBuffer)
                     sampleBuffer.clear() // Clear the sample buffer for the next sample
                     // Reset sample times for the next round of sampling
-                    sampleStartTime = System.currentTimeMillis() + Pref.getInstance().getTimeToStartSoundSample() * 1000
-                    sampleEndTime = sampleStartTime + Pref.getInstance().getSoundSampleDuration() * 1000
+                    sampleStartTime = System.currentTimeMillis() + Pref.getInstance().getUser()?.setting?.defaultTimeToStartSoundSample!!.toLong() * 1000
+                    sampleEndTime = sampleStartTime + Pref.getInstance().getUser()?.setting?.defaultSoundSampleDuration!!.toLong() * 1000
+
                 }
             }
         }
@@ -192,7 +198,7 @@ class MainActivity : BaseActivity(), MainActivityNav {
     }
 
     private fun processSampledAudio(sampleBuffer: LinkedList<ShortArray>) {
-        var type = Pref.getInstance().getFormat()
+        var type = Pref.getInstance().getUser()?.setting?.defaultFormat
         if (type == "PCM") {
             saveAsPCMFile(sampleBuffer)
         } else {
@@ -404,7 +410,7 @@ class MainActivity : BaseActivity(), MainActivityNav {
     }
 
     override fun onAdminClick(view: View) {
-        val intent = Intent(this, UserDetailsActivity::class.java)
+        val intent = Intent(this, UserListActivity::class.java)
         startActivity(intent)
     }
 }

@@ -8,18 +8,15 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
-import com.google.firebase.storage.storageMetadata
 import com.playback.soundrec.App
 import com.playback.soundrec.model.User
 import java.io.File
 
 class FireBaseService :CallsAPi {
-    private var database: FirebaseDatabase = Firebase.database
+    private var database: FirebaseDatabase = FirebaseDatabase.getInstance()
     private var auth: FirebaseAuth = Firebase.auth
     private var storage = Firebase.storage
 
@@ -37,8 +34,8 @@ class FireBaseService :CallsAPi {
 
     init {
         // init firebase
-        userRef = database?.getReference("users")
-        storageRef = storage?.reference
+        userRef = database.getReference().child("users")
+        storageRef = storage.reference
 //        auth!!.signInAnonymously().addOnCompleteListener {
 //            if (it.isSuccessful) {
 //                //val user = auth!!.currentUser
@@ -62,12 +59,12 @@ class FireBaseService :CallsAPi {
     }
 
     override fun getUserInfo(userId: String, callback: (User?) -> Unit) {
-        database.getReference("users").child(userId)
-            .get().addOnSuccessListener { dataSnapshot ->
+        userRef?.child(userId)
+            ?.get()?.addOnSuccessListener { dataSnapshot ->
                 val user = dataSnapshot.getValue(User::class.java)
                 callback(user)
             }
-            .addOnFailureListener {
+            ?.addOnFailureListener {
                 callback(null)
             }
     }
@@ -90,12 +87,13 @@ class FireBaseService :CallsAPi {
         auth.createUserWithEmailAndPassword(user.userName!!, user.password!!).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val userId = auth.currentUser?.uid
-                user.id = userId
-                database.getReference("users").child(userId!!).setValue(user)
-                    .addOnSuccessListener {
+                user.user_id = userId
+
+                userRef?.child(userId!!)?.setValue(user)
+                    ?.addOnSuccessListener {
                         callback(userId)
                     }
-                    .addOnFailureListener {
+                    ?.addOnFailureListener {
                         callback(null)
                     }
             } else {
@@ -180,7 +178,7 @@ class FireBaseService :CallsAPi {
 //    }
 //
     override fun getAllUsers(callback: (List<User>?) -> Unit) {
-        database.reference.child("users").addListenerForSingleValueEvent(object : ValueEventListener {
+       userRef?.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val users = snapshot.children.mapNotNull { it.getValue(User::class.java) }
                 callback(users)
@@ -189,7 +187,9 @@ class FireBaseService :CallsAPi {
             override fun onCancelled(error: DatabaseError) {
                 callback(null)
             }
-        })    }
+        })
+
+    }
 
     override fun updateField(
         parent: String?,

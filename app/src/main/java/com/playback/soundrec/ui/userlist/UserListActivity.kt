@@ -1,13 +1,11 @@
 package com.playback.soundrec.ui.userlist
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.playback.soundrec.R
 import com.playback.soundrec.bases.BaseActivity
 import com.playback.soundrec.databinding.ActivityUserListBinding
@@ -30,7 +28,7 @@ class UserListActivity : BaseActivity() {
 
         adapter = UserAdapter() { user ->
             val intent = Intent(this, UserDetailsActivity::class.java)
-            intent.putExtra("USER_ID", user.id)
+            intent.putExtra("USER_ID", user.user_id)
             startActivity(intent)
         }
         binding!!.recyclerView.adapter = adapter
@@ -38,8 +36,11 @@ class UserListActivity : BaseActivity() {
            adapter!!.replaceItems(users)
         })
         binding!!.fabAddUser.setOnClickListener {
-            viewModel!!.fetchUsers()
-          //  showCreateUserDialog()
+         //   viewModel!!.fetchUsers()
+            showCreateUserDialog()
+        }
+        binding!!.btnBack.setOnClickListener {
+            finish()
         }
         viewModel!!.fetchUsers()
     }

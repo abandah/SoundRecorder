@@ -3,9 +3,9 @@ package com.playback.soundrec.model
 import com.playback.soundrec.AppConstants
 import java.io.Serializable
 
-class User : Serializable{
-    val isAdmin: Boolean? = false
-    var id: String? = null
+class User() : Serializable{
+    var admin: String? = "0"
+    var user_id: String? = null
     var name: String? = null
     var phonenumber : String? = null
     var userName : String? = null
@@ -17,7 +17,7 @@ class User : Serializable{
     class Setting :Serializable{
         var defaultSampleRate : String? = "44100"
         var defaultFormat: String? = AppConstants.FORMAT_AAC
-        var defaultEnableSendDataToServer : String?= "false"
+        var defaultEnableSendDataToServer : String?= "0"
         var defaultDelay: String? = "0"
         var defaultTimeToStartSoundSample: String? = "0"
         var defaultSoundSampleDuration : String?= "5"

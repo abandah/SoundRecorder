@@ -55,7 +55,7 @@ class UserDetailsActivity : BaseActivity() {
         addView("Sample Rate",
             "setting",
             "defaultSampleRate",
-            user.setting?.defaultSampleRate,
+            user.setting?.defaultSampleRate.toString(),
             EditViews.MULTIABLE,
             arrayOf<String>(
                 SettingsMapper.SAMPLE_RATE_8000,
@@ -83,17 +83,17 @@ class UserDetailsActivity : BaseActivity() {
             user.setting?.defaultEnableSendDataToServer.toString(),
             EditViews.Boolean
         )
-        addView("Delay","setting", "defaultDelay", user.setting?.defaultDelay, EditViews.Int)
+        addView("Delay","setting", "defaultDelay", user.setting?.defaultDelay.toString(), EditViews.Int)
         addView("Start Sample From ",
             "setting",
             "defaultTimeToStartSoundSample",
-            user.setting?.defaultTimeToStartSoundSample,
+            user.setting?.defaultTimeToStartSoundSample.toString(),
             EditViews.Int
         )
         addView("Sample Duration",
             "setting",
             "defaultSoundSampleDuration",
-            user.setting?.defaultSoundSampleDuration,
+            user.setting?.defaultSoundSampleDuration.toString(),
             EditViews.Int
         )
 

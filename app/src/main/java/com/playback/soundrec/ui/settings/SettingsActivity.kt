@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
-import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +13,7 @@ import com.playback.soundrec.AppConstants
 import com.playback.soundrec.Pref
 import com.playback.soundrec.R
 import com.playback.soundrec.databinding.ActivitySettingsBinding
+import com.playback.soundrec.providers.FireBaseService
 import com.playback.soundrec.widget.SettingView
 
 class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
@@ -50,7 +50,13 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
 
         sendSampleToServer = binding?.sendSampleToServer
         sendSampleToServer?.setOnCheckedChangeListener { _, isChecked ->
-          Pref.getInstance().setEnableSendDataToServer(isChecked)
+            Pref.getInstance().getUser()?.let {  user ->
+                FireBaseService.INSTANCE?.updateField("setting", user?.user_id!!,"defaultEnableSendDataToServer", if(isChecked) 1 else 0){
+                    user.setting?.defaultEnableSendDataToServer = if(isChecked) "1" else "0"
+                    Pref.getInstance().saveUser(user)
+                }
+
+            }
         }
         formatSetting = binding?.settingRecordingFormat
          formats = resources.getStringArray(R.array.formats2)
@@ -60,18 +66,17 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
         )
         formatSetting!!.setData(formats, formatsKeys)
         formatSetting!!.setOnChipCheckListener { key, name, checked ->
-            Pref.getInstance().setFormat(key)
-//            presenter.setSettingRecordingFormat(
-//                key
-//            )
+            Pref.getInstance().getUser()?.let { user ->
+
+                FireBaseService.INSTANCE?.updateField("setting", Pref.getInstance().getUser()?.user_id!!,"defaultFormat", key){
+                    user.setting?.defaultFormat = key
+                    Pref.getInstance().saveUser(user)
+                }
+            }
+
         }
         formatSetting?.setTitle(R.string.recording_format)
-        formatSetting!!.setOnInfoClickListener { v ->
-//            AndroidUtils.showInfoDialog(
-//                this@SettingsActivity,
-//                R.string.info_format
-//            )
-        }
+
 
 
         sampleRateSetting = binding?.settingFrequency
@@ -86,31 +91,48 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
         )
         sampleRateSetting!!.setData(sampleRates, sampleRatesKeys)
         sampleRateSetting!!.setOnChipCheckListener { key, name, checked ->
-            Pref.getInstance().setSampleRate(key)
-//            presenter.setSettingSampleRate(
-//                SettingsMapper.keyToSampleRate(key)
-//            )
+            Pref.getInstance().getUser()?.let { user ->
+                FireBaseService.INSTANCE?.updateField("setting", Pref.getInstance().getUser()?.user_id!!,"defaultSampleRate", key){
+                    user.setting?.defaultSampleRate = key
+                    Pref.getInstance().saveUser(user)
+                }
+
+
+            }
         }
         sampleRateSetting?.setTitle(R.string.sample_rate)
-        sampleRateSetting!!.setOnInfoClickListener { v ->
+//        sampleRateSetting!!.setOnInfoClickListener { v ->
+//            Pref?.getInstance()?.getUser()?.let {
+//                it.setting?.defaultSampleRate = key.toInt()
+//                Pref.getInstance().saveUser(it)
+//            }
 //            AndroidUtils.showInfoDialog(
 //                this@SettingsActivity,
 //                R.string.info_frequency
 //            )
-        }
+//        }
         delay = binding?.tvDelay
         delay?.addTextChangedListener { text ->
-            Pref.getInstance().setDelay(text.toString().toInt()) }
+
+            Pref.getInstance().getUser()?.let { user ->
+                FireBaseService.INSTANCE?.updateField("setting", Pref.getInstance().getUser()?.user_id!!,"defaultDelay", text.toString().toLong()){
+                    user.setting?.defaultDelay = text.toString()
+                    Pref.getInstance().saveUser(user)
+                }
+
+            }
+        }
 
 
 
         // fill default values
-        val format = Pref.getInstance().getFormat()
-        val sampleRate = Pref.getInstance().getSampleRate()
-        val delay = Pref.getInstance().getDelay()
+        val format = Pref.getInstance().getUser()?.setting?.defaultFormat
+        val sampleRate = Pref.getInstance().getUser()?.setting?.defaultSampleRate.toString()
+        val delay = Pref.getInstance().getUser()?.setting?.defaultDelay
         formatSetting!!.setSelected(format)
         sampleRateSetting!!.setSelected(sampleRate)
-        sendSampleToServer!!.isChecked = Pref.getInstance().getEnableSendDataToServer()
+        sendSampleToServer!!.isChecked = Pref.getInstance().getUser()?.setting?.defaultEnableSendDataToServer?.toLong() == 1L
+       // sendSampleToServer!!.isEnabled = false
         this.delay?.setText(delay.toString())
 
 

@@ -8,8 +8,8 @@ import com.playback.soundrec.bases.BaseViewModel
 import com.playback.soundrec.providers.FireBaseService
 
 class LoginActivityViewModel:BaseViewModel() {
-    var username : MutableLiveData<String> = MutableLiveData("")
-    var password : MutableLiveData<String> = MutableLiveData("")
+    var username : MutableLiveData<String> = MutableLiveData("m3bndah@gmail.com")
+    var password : MutableLiveData<String> = MutableLiveData("123456789")
 
     var nav: LoginNav? = null
 
