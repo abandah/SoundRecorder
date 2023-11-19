@@ -51,7 +51,7 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
         sendSampleToServer = binding?.sendSampleToServer
         sendSampleToServer?.setOnCheckedChangeListener { _, isChecked ->
             Pref.getInstance().getUser()?.let {  user ->
-                FireBaseService.INSTANCE?.updateField("setting", user?.user_id!!,"defaultEnableSendDataToServer", if(isChecked) 1 else 0){
+                FireBaseService.INSTANCE?.updateField("setting", user?.user_id!!,"defaultEnableSendDataToServer", if(isChecked) "1" else "0"){
                     user.setting?.defaultEnableSendDataToServer = if(isChecked) "1" else "0"
                     Pref.getInstance().saveUser(user)
                 }
@@ -115,7 +115,7 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
         delay?.addTextChangedListener { text ->
 
             Pref.getInstance().getUser()?.let { user ->
-                FireBaseService.INSTANCE?.updateField("setting", Pref.getInstance().getUser()?.user_id!!,"defaultDelay", text.toString().toLong()){
+                FireBaseService.INSTANCE?.updateField("setting", Pref.getInstance().getUser()?.user_id!!,"defaultDelay", text.toString()){
                     user.setting?.defaultDelay = text.toString()
                     Pref.getInstance().saveUser(user)
                 }

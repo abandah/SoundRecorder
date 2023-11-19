@@ -33,6 +33,7 @@ open class BaseActivity : AppCompatActivity() {
                 RECORD_AUDIO_PERMISSION_REQUEST_CODE
             )
         }
+        setupUI()
     }
 
 

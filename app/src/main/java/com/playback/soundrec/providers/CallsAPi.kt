@@ -22,7 +22,7 @@ interface CallsAPi {
 
     fun getAllUsers(callback: (List<User>?) -> Unit)
 
-    fun updateField(parent :String? , userId: String, field: String, value: Any, callback: (String) -> Unit)
+    fun updateField(parent :String? , userId: String, field: String, value: String, callback: (String) -> Unit)
 
 
 }

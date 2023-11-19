@@ -195,7 +195,7 @@ class FireBaseService :CallsAPi {
         parent: String?,
         userId: String,
         field: String,
-        value: Any,
+        value: String,
         callback: (String) -> Unit
     ) {
         var ref = userRef!!.child(userId)

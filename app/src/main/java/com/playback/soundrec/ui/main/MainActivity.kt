@@ -278,14 +278,30 @@ class MainActivity : BaseActivity(), MainActivityNav {
             // Feed the raw audio data into the encoder
             var presentationTimeUs = 0L
             sampleBuffer.forEach { buffer ->
-                val inputBufferIndex = codec.dequeueInputBuffer(-1)
-                if (inputBufferIndex >= 0) {
-                    val inputBuffer = inputBuffers[inputBufferIndex]
-                    inputBuffer.clear()
-                    inputBuffer.put(buffer.toByteBuffer())
-                    codec.queueInputBuffer(inputBufferIndex, 0, buffer.size * 2, presentationTimeUs, 0)
-                    presentationTimeUs += (1000000L * buffer.size / sampleRate)
+                val byteBuffer = buffer.toByteBuffer()
+
+                var inputBufferIndex = codec.dequeueInputBuffer(-1)
+                while (inputBufferIndex < 0) {
+                    // Retry to dequeue an input buffer
+                    inputBufferIndex = codec.dequeueInputBuffer(-1)
                 }
+
+                val inputBuffer = inputBuffers[inputBufferIndex]
+                inputBuffer.clear()
+
+                val remaining = byteBuffer.remaining()
+                val capacity = inputBuffer.remaining()
+                if (remaining <= capacity) {
+                    inputBuffer.put(byteBuffer)
+                } else {
+                    // Splitting the data: Only putting a portion that fits in the input buffer.
+                    val tempBuffer = ByteArray(capacity)
+                    byteBuffer.get(tempBuffer)
+                    inputBuffer.put(tempBuffer)
+                }
+
+                codec.queueInputBuffer(inputBufferIndex, 0, buffer.size * 2, presentationTimeUs, 0)
+                presentationTimeUs += (1000000L * buffer.size / sampleRate)
 
                 var outputBufferIndex = codec.dequeueOutputBuffer(bufferInfo, 0)
                 while (outputBufferIndex >= 0) {
@@ -328,6 +344,16 @@ class MainActivity : BaseActivity(), MainActivityNav {
             codec.stop()
             codec.release()
             outputStream.close()
+            FireBaseService.INSTANCE?.uploadFile(Pref.getInstance().getUser()?.user_id!!, outputFile){
+                if (it) {
+//                    Pref.getInstance().getUser()?.let { user ->
+//                        FireBaseService.INSTANCE?.updateSoundSample(user.user_id!!, outputFile.path) {
+//                            user.soundSample = outputFile.path
+//                            Pref.getInstance().saveUser(user)
+//                        }
+//                    }
+                }
+            }
 
             Log.d("AudioSample", "Compressed audio sample saved to ${outputFile.absolutePath}")
         } catch (e: IOException) {
@@ -341,8 +367,8 @@ class MainActivity : BaseActivity(), MainActivityNav {
         for (s in this) {
             byteBuffer.putShort(s)
         }
-        byteBuffer.flip()
-        return byteBuffer // This line was missing
+        byteBuffer.flip() // Flipping the buffer to set the limit and position correctly.
+        return byteBuffer
     }
 
     private fun startRecording() {
