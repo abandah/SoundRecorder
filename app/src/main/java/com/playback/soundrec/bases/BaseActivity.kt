@@ -19,7 +19,7 @@ open class BaseActivity : AppCompatActivity() {
          //Check and request permissions if not granted
         if (checkAndRequestPermission(Manifest.permission.RECORD_AUDIO, RECORD_AUDIO_PERMISSION_REQUEST_CODE)) {
             // Permissions are already granted, set up UI elements
-            setupUI()
+         //   setupUI()
         }
         else{
             // Permissions are not granted, so request permissions first and then set up UI elements
@@ -33,7 +33,7 @@ open class BaseActivity : AppCompatActivity() {
                 RECORD_AUDIO_PERMISSION_REQUEST_CODE
             )
         }
-        setupUI()
+     //   setupUI()
     }
 
 
@@ -71,12 +71,9 @@ open class BaseActivity : AppCompatActivity() {
                 checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
                 checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
             ) {
-                setupUI()
+            //    setupUI()
             }
         }
-    }
-
-    open fun setupUI() {
     }
 
     private fun checkPermission(permission: String): Boolean {

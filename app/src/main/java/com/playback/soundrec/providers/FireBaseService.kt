@@ -70,12 +70,11 @@ class FireBaseService :CallsAPi {
     }
 
     override fun uploadFile(userId: String, file: File, callback: (Boolean) -> Unit) {
-        val audioFileRef = storage.reference.child("audio/$userId/sample.aac")
+        val audioFileRef = storage.reference.child("audio/$userId/${file.name}")
         val fileUri = Uri.fromFile(file)
-
         audioFileRef.putFile(fileUri).addOnSuccessListener {
             updateSoundSample(userId, it.metadata?.path.toString()) { success ->
-                callback(success)
+              callback(success)
             }
         }.addOnFailureListener {
             callback(false)

@@ -33,9 +33,33 @@ class TestActivity : BaseActivity() {
 
     //UI Views
     private var frequencySpinner: Spinner? = null
+        get() {
+            if (field == null) {
+                field = findViewById(R.id.frequencySpinner)
+            }
+            return field
+        }
     private var delayEditText: EditText? = null
+        get() {
+            if (field == null) {
+                field = findViewById(R.id.delayEditText)
+            }
+            return field
+        }
     private var takeSampleCheckBox: CheckBox? = null
+        get() {
+            if (field == null) {
+                field = findViewById(R.id.takeSampleCheckBox)
+            }
+            return field
+        }
     private var startButton: Button? = null
+        get() {
+            if (field == null) {
+                field = findViewById(R.id.startButton)
+            }
+            return field
+        }
     var waveformView : WaveformView? = null
     var waveformView2 : WaveformView? = null
 
@@ -63,7 +87,6 @@ class TestActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        setupUI()
     }
 
     @SuppressLint("MissingPermission")
@@ -342,47 +365,47 @@ class TestActivity : BaseActivity() {
     }
 
 
-    override fun setupUI() {
-        super.setupUI()
-        frequencySpinner = findViewById(R.id.frequencySpinner)
-        delayEditText = findViewById(R.id.delayEditText)
-        takeSampleCheckBox = findViewById(R.id.takeSampleCheckBox)
-        startButton = findViewById(R.id.startButton)
-        waveformView = findViewById<WaveformView>(R.id.waveformView)
-        waveformView?.waveColor = Color.BLUE// Set color
-        waveformView?.lineWidth = 8f // Set line width
-        waveformView?.gain = 1.5f // Set gain
-
-        waveformView2 = findViewById<WaveformView>(R.id.waveformView2)
-        waveformView2?.waveColor=Color.WHITE // Set color
-        waveformView2?.lineWidth=4f // Set line width
-        waveformView2?.gain =3f // Set gain
-        initRecorders()
-
-        // Set up the frequency spinner
-        val sampleRates = arrayOf("44100", "48000", "96000")
-        val sampleRateAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, sampleRates)
-        sampleRateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        frequencySpinner?.adapter = sampleRateAdapter
-        frequencySpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                selectedSampleRate = sampleRates[position].toInt()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // Default to 44100 Hz if nothing is selected
-                selectedSampleRate = 44100
-            }
-        }
-
-        startButton?.setOnClickListener {
-            if (isActive) {
-                stopRecording()
-            } else {
-                startRecording()
-            }
-        }
-    }
+//    override fun setupUI() {
+//        super.setupUI()
+//        frequencySpinner = findViewById(R.id.frequencySpinner)
+//        delayEditText = findViewById(R.id.delayEditText)
+//        takeSampleCheckBox = findViewById(R.id.takeSampleCheckBox)
+//        startButton = findViewById(R.id.startButton)
+//        waveformView = findViewById<WaveformView>(R.id.waveformView)
+//        waveformView?.waveColor = Color.BLUE// Set color
+//        waveformView?.lineWidth = 8f // Set line width
+//        waveformView?.gain = 1.5f // Set gain
+//
+//        waveformView2 = findViewById<WaveformView>(R.id.waveformView2)
+//        waveformView2?.waveColor=Color.WHITE // Set color
+//        waveformView2?.lineWidth=4f // Set line width
+//        waveformView2?.gain =3f // Set gain
+//        initRecorders()
+//
+//        // Set up the frequency spinner
+//        val sampleRates = arrayOf("44100", "48000", "96000")
+//        val sampleRateAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, sampleRates)
+//        sampleRateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        frequencySpinner?.adapter = sampleRateAdapter
+//        frequencySpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+//                selectedSampleRate = sampleRates[position].toInt()
+//            }
+//
+//            override fun onNothingSelected(parent: AdapterView<*>) {
+//                // Default to 44100 Hz if nothing is selected
+//                selectedSampleRate = 44100
+//            }
+//        }
+//
+//        startButton?.setOnClickListener {
+//            if (isActive) {
+//                stopRecording()
+//            } else {
+//                startRecording()
+//            }
+//        }
+//    }
 
 
 }

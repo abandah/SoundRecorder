@@ -27,21 +27,45 @@ import com.playback.soundrec.widget.WaveformView
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Integer.min
 import java.nio.ByteBuffer
 import java.util.LinkedList
 import java.util.Queue
+import kotlinx.coroutines.*
 
 class MainActivity : BaseActivity(), MainActivityNav {
     var binding : ActivityMainBinding? = null
     var viewModel : MainActivityViewModel? = null
-    var waveformView : WaveformView? = null
-    var waveformView2 : WaveformView? = null
+    private val backgroundScope = CoroutineScope(Dispatchers.IO)
 
+    var waveformView : WaveformView? = null
+        get() {
+            if( field == null)
+            {
+                field = binding?.waveformView
+                field?.waveColor = Color.WHITE// Set color
+                field?.lineWidth = 10f // Set line width
+                field?.gain = 10f // Set gain
+            }
+            return field
+        }
+    var waveformView2 : WaveformView? = null
+        get() {
+            if( field == null)
+            {
+                field = binding?.waveformView2
+                field?.waveColor = Color.WHITE// Set color
+                field?.lineWidth = 10f // Set line width
+                field?.gain = 10f // Set gain
+            }
+            return field
+        }
     var audioRecord: AudioRecord? = null
     var audioTrack: AudioTrack? = null
     var intBufferSize: Int? = null
     var thread: Thread? = null
-
+    // Other variables...
+    private var isACCMFileSaved = false
     private fun initRecorders() {
         thread = Thread {
             threadLoop()
@@ -197,17 +221,23 @@ class MainActivity : BaseActivity(), MainActivityNav {
         audioTrack?.release()
     }
 
-    private fun processSampledAudio(sampleBuffer: LinkedList<ShortArray>) {
+    private  fun processSampledAudio(sampleBuffer: LinkedList<ShortArray>) {
+        if(isACCMFileSaved) return // Don't save the sample if it's already saved
+        isACCMFileSaved = true // Set the flag to true after saving as ACCM file
         var type = Pref.getInstance().getUser()?.setting?.defaultFormat
-        if (type == "PCM") {
-            saveAsPCMFile(sampleBuffer)
+        if (type == "pcm") {
+            backgroundScope.launch {
+                saveAsPCMFile(sampleBuffer)
+            }
         } else {
-            saveAsACCMFile(sampleBuffer)
+            backgroundScope.launch {
+                saveAsACCMFile(sampleBuffer)
+            }
         }
 
     }
 
-    private fun saveAsPCMFile(sampleBuffer: LinkedList<ShortArray>) {
+    private suspend fun saveAsPCMFile(sampleBuffer: LinkedList<ShortArray>) {
         // Calculate the total size of the sample
         // Calculate the total size of the sample
         val totalSize = sampleBuffer.sumOf { it.size }
@@ -236,13 +266,23 @@ class MainActivity : BaseActivity(), MainActivityNav {
 
             // Inform that the file was saved successfully
             Log.d("AudioSample", "Audio sample saved to ${outputFile.absolutePath}")
+            FireBaseService.INSTANCE?.uploadFile(Pref.getInstance().getUser()?.user_id!!, outputFile){
+                if (it) {
+//                    Pref.getInstance().getUser()?.let { user ->
+//                        FireBaseService.INSTANCE?.updateSoundSample(user.user_id!!, outputFile.path) {
+//                            user.soundSample = outputFile.path
+//                            Pref.getInstance().saveUser(user)
+//                        }
+//                    }
+                }
+            }
         } catch (e: IOException) {
             // Handle exceptions
             Log.e("AudioSample", "Failed to save audio sample", e)
         }
     }
 
-    private fun saveAsACCMFile(sampleBuffer: LinkedList<ShortArray>) {
+    private suspend fun saveAsACCMFile(sampleBuffer: LinkedList<ShortArray>) {
         // The MIME type for AAC audio is "audio/mp4a-latm"
         val mimeType = "audio/mp4a-latm"
         // The desired sample rate for the output
@@ -291,17 +331,13 @@ class MainActivity : BaseActivity(), MainActivityNav {
 
                 val remaining = byteBuffer.remaining()
                 val capacity = inputBuffer.remaining()
-                if (remaining <= capacity) {
-                    inputBuffer.put(byteBuffer)
-                } else {
-                    // Splitting the data: Only putting a portion that fits in the input buffer.
-                    val tempBuffer = ByteArray(capacity)
-                    byteBuffer.get(tempBuffer)
-                    inputBuffer.put(tempBuffer)
-                }
+                val sizeToWrite = min(remaining, capacity)
+                val tempBuffer = ByteArray(sizeToWrite)
+                byteBuffer.get(tempBuffer)
+                inputBuffer.put(tempBuffer)
 
-                codec.queueInputBuffer(inputBufferIndex, 0, buffer.size * 2, presentationTimeUs, 0)
-                presentationTimeUs += (1000000L * buffer.size / sampleRate)
+                codec.queueInputBuffer(inputBufferIndex, 0, sizeToWrite, presentationTimeUs, 0)
+                presentationTimeUs += (1000000L * sizeToWrite / (2 * sampleRate)) // Adjust presentation time
 
                 var outputBufferIndex = codec.dequeueOutputBuffer(bufferInfo, 0)
                 while (outputBufferIndex >= 0) {
@@ -372,6 +408,8 @@ class MainActivity : BaseActivity(), MainActivityNav {
     }
 
     private fun startRecording() {
+        isACCMFileSaved = false // Reset the flag when starting a new recording
+
         // Only create a new Thread if the previous one has finished or not been created
         if (thread == null || thread?.isAlive == false) {
             thread = Thread {
@@ -399,23 +437,6 @@ class MainActivity : BaseActivity(), MainActivityNav {
         thread = null // Clear the thread so a new one can be created next time
     }
 
-
-    override fun setupUI() {
-        super.setupUI()
-
-        waveformView = binding?.waveformView
-        waveformView?.waveColor = Color.WHITE// Set color
-        waveformView?.lineWidth = 10f // Set line width
-        waveformView?.gain = 10f // Set gain
-
-        waveformView2 = binding?.waveformView2
-        waveformView2?.waveColor= Color.WHITE // Set color
-        waveformView2?.lineWidth=10f // Set line width
-        waveformView2?.gain =10f // Set gain
-
-        initRecorders()
-
-    }
     override fun onSettingsClick(view: View) {
         SettingsActivity.getStartIntent(this)?.let {
             startActivity(it)
