@@ -54,5 +54,6 @@
     <string name="userDetails">User Details</string>
     <string name="update">Update</string>
     <string name="cancel">Cancel</string>
+    <string name="ChangePassword">Change Password</string>
 
 </resources>

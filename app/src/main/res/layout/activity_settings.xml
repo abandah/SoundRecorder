@@ -155,6 +155,28 @@
 
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_normal"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnChangePassword"
+                android:layout_marginStart="@dimen/spacing_normal"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:layout_marginEnd="@dimen/spacing_normal"
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/outline_send_and_archive_24"
+                android:drawablePadding="@dimen/spacing_normal"
+                android:text="@string/ChangePassword" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

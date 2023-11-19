@@ -160,7 +160,6 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
                         ) {
                             user.setting?.defaultDelay = newValue
                             Pref.getInstance().saveUser(user)
-                            view.setText(newValue)
                             dialog.dismiss()
 
                         }
@@ -194,6 +193,45 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
 
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
+        }
+
+        binding?.btnChangePassword?.setOnClickListener {
+            val container = layoutInflater.inflate(R.layout.view_et, null) as LinearLayout
+            var view: EditText? = null
+
+            //    val container = layoutInflater.inflate(R.layout.line, null)
+            view = container?.findViewById<EditText>(R.id.et_content)
+                ?.apply {
+                    hint = "Enter new password"
+                    inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                }
+
+            // val editText = EditText(this).apply { setText(currentValue) }
+            AlertDialog.Builder(this, R.style.MyDialogTheme)
+                .setTitle("Edit delay")
+                .setView(container)
+                .setPositiveButton("Update") { dialog, _ ->
+
+                    val newValue = (view as EditText).text.toString()
+                    Pref.getInstance().getUser()?.let { user ->
+                        FireBaseService.INSTANCE?.updateField(
+                            null,
+                            Pref.getInstance().getUser()?.user_id!!,
+                            "password",
+                            newValue
+                        ) {
+                            user?.password = newValue
+                            Pref.getInstance().saveUser(user)
+                            dialog.dismiss()
+
+                        }
+
+                    }
+
+
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
     }
 
