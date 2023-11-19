@@ -2,11 +2,14 @@ package com.playback.soundrec.ui.settings
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.playback.soundrec.AppConstants
@@ -16,8 +19,9 @@ import com.playback.soundrec.databinding.ActivitySettingsBinding
 import com.playback.soundrec.providers.FireBaseService
 import com.playback.soundrec.widget.SettingView
 
+
 class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
-    companion object{
+    companion object {
         fun getStartIntent(context: Context?): Intent? {
             val intent = Intent(context, SettingsActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -28,15 +32,15 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
     private var sendSampleToServer: SwitchMaterial? = null
     private var formatSetting: SettingView? = null
     private var formats: Array<String>? = null
-    private var formatsKeys: Array<String> ? = null
-    private var delay:EditText?=null
+    private var formatsKeys: Array<String>? = null
+    private var delay: LinearLayout? = null
 
     private var sampleRateSetting: SettingView? = null
-    private var sampleRates: Array<String>?=null
-    private var sampleRatesKeys: Array<String>?=null
+    private var sampleRates: Array<String>? = null
+    private var sampleRatesKeys: Array<String>? = null
 
-    var binding : ActivitySettingsBinding? = null
-    var viewModel : SettingActivityViewModel? = null
+    var binding: ActivitySettingsBinding? = null
+    var viewModel: SettingActivityViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,17 +54,22 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
 
         sendSampleToServer = binding?.sendSampleToServer
         sendSampleToServer?.setOnCheckedChangeListener { _, isChecked ->
-            Pref.getInstance().getUser()?.let {  user ->
-                FireBaseService.INSTANCE?.updateField("setting", user?.user_id!!,"defaultEnableSendDataToServer", if(isChecked) "1" else "0"){
-                    user.setting?.defaultEnableSendDataToServer = if(isChecked) "1" else "0"
+            Pref.getInstance().getUser()?.let { user ->
+                FireBaseService.INSTANCE?.updateField(
+                    "setting",
+                    user?.user_id!!,
+                    "defaultEnableSendDataToServer",
+                    if (isChecked) "1" else "0"
+                ) {
+                    user.setting?.defaultEnableSendDataToServer = if (isChecked) "1" else "0"
                     Pref.getInstance().saveUser(user)
                 }
 
             }
         }
         formatSetting = binding?.settingRecordingFormat
-         formats = resources.getStringArray(R.array.formats2)
-         formatsKeys = arrayOf<String>(
+        formats = resources.getStringArray(R.array.formats2)
+        formatsKeys = arrayOf<String>(
             AppConstants.FORMAT_PCM,
             AppConstants.FORMAT_AAC
         )
@@ -68,7 +77,12 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
         formatSetting!!.setOnChipCheckListener { key, name, checked ->
             Pref.getInstance().getUser()?.let { user ->
 
-                FireBaseService.INSTANCE?.updateField("setting", Pref.getInstance().getUser()?.user_id!!,"defaultFormat", key){
+                FireBaseService.INSTANCE?.updateField(
+                    "setting",
+                    Pref.getInstance().getUser()?.user_id!!,
+                    "defaultFormat",
+                    key
+                ) {
                     user.setting?.defaultFormat = key
                     Pref.getInstance().saveUser(user)
                 }
@@ -92,7 +106,12 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
         sampleRateSetting!!.setData(sampleRates, sampleRatesKeys)
         sampleRateSetting!!.setOnChipCheckListener { key, name, checked ->
             Pref.getInstance().getUser()?.let { user ->
-                FireBaseService.INSTANCE?.updateField("setting", Pref.getInstance().getUser()?.user_id!!,"defaultSampleRate", key){
+                FireBaseService.INSTANCE?.updateField(
+                    "setting",
+                    Pref.getInstance().getUser()?.user_id!!,
+                    "defaultSampleRate",
+                    key
+                ) {
                     user.setting?.defaultSampleRate = key
                     Pref.getInstance().saveUser(user)
                 }
@@ -111,18 +130,42 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
 //                R.string.info_frequency
 //            )
 //        }
-        delay = binding?.tvDelay
-        delay?.addTextChangedListener { text ->
+        delay = binding?.llDelay
+        delay?.setOnClickListener { viewbt ->
+            var view: View? = null
 
-            Pref.getInstance().getUser()?.let { user ->
-                FireBaseService.INSTANCE?.updateField("setting", Pref.getInstance().getUser()?.user_id!!,"defaultDelay", text.toString()){
-                    user.setting?.defaultDelay = text.toString()
-                    Pref.getInstance().saveUser(user)
+            view = EditText(this)
+                .apply { setText(binding?.tvDelay?.text.toString()) }
+
+            // val editText = EditText(this).apply { setText(currentValue) }
+            AlertDialog.Builder(this, R.style.MyDialogTheme)
+                .setTitle("Edit delay")
+                .setView(view)
+                .setPositiveButton("Update") { dialog, _ ->
+
+                    val newValue = (view as EditText).text.toString()
+                    Pref.getInstance().getUser()?.let { user ->
+                        FireBaseService.INSTANCE?.updateField(
+                            "setting",
+                            Pref.getInstance().getUser()?.user_id!!,
+                            "defaultDelay",
+                            newValue
+                        ) {
+                            user.setting?.defaultDelay = newValue
+                            Pref.getInstance().saveUser(user)
+                            view.setText(newValue)
+                            dialog.dismiss()
+
+                        }
+
+                    }
+
+
                 }
+                .setNegativeButton("Cancel", null)
+                .show()
 
-            }
         }
-
 
 
         // fill default values
@@ -131,11 +174,20 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
         val delay = Pref.getInstance().getUser()?.setting?.defaultDelay
         formatSetting!!.setSelected(format)
         sampleRateSetting!!.setSelected(sampleRate)
-        sendSampleToServer!!.isChecked = Pref.getInstance().getUser()?.setting?.defaultEnableSendDataToServer?.toLong() == 1L
-       // sendSampleToServer!!.isEnabled = false
-        this.delay?.setText(delay.toString())
+        sendSampleToServer!!.isChecked =
+            Pref.getInstance().getUser()?.setting?.defaultEnableSendDataToServer?.toLong() == 1L
+        // sendSampleToServer!!.isEnabled = false
+        binding?.tvDelay?.setText(delay.toString())
 
+        try {
+            val pInfo: PackageInfo =
+                getPackageManager().getPackageInfo(getPackageName(), 0)
+            val version = pInfo.versionName
+            binding?.txtversyion?.text = "Version: " + version
 
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
     }
 
     override fun onBackClick(view: View) {

@@ -36,7 +36,8 @@
                 android:src="@drawable/waveform"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/md_yellow_A700" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -53,7 +54,6 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tv_user"
                 android:layout_marginTop="@dimen/spacing_normal"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/username">
@@ -91,6 +91,7 @@
                 android:id="@+id/dialog_details_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/md_yellow_A700"
                 android:onClick="@{viewModel::login}"
                 android:textSize="@dimen/text_normal"
                 android:paddingStart="@dimen/spacing_normal"
