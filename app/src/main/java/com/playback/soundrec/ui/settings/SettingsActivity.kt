@@ -56,15 +56,17 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
         sendSampleToServer = binding?.sendSampleToServer
         sendSampleToServer?.setOnCheckedChangeListener { _, isChecked ->
             Pref.getInstance().getUser()?.let { user ->
-                FireBaseService.INSTANCE?.updateField(
-                    "setting",
-                    user?.user_id!!,
-                    "defaultEnableSendDataToServer",
-                    if (isChecked) "1" else "0"
-                ) {
-                    user.setting?.defaultEnableSendDataToServer = if (isChecked) "1" else "0"
-                    Pref.getInstance().saveUser(user)
-                }
+                sendSampleToServer?.isChecked = user?.setting?.defaultEnableSendDataToServer?.toLong() == 1L
+
+//                FireBaseService.INSTANCE?.updateField(
+//                    "setting",
+//                    user?.user_id!!,
+//                    "defaultEnableSendDataToServer",
+//                    if (isChecked) "1" else "0"
+//                ) {
+//                    user.setting?.defaultEnableSendDataToServer = if (isChecked) "1" else "0"
+//                    Pref.getInstance().saveUser(user)
+//                }
 
             }
         }
