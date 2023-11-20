@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import com.playback.soundrec.App
@@ -18,10 +19,10 @@ import java.io.File
 class FireBaseService :CallsAPi {
     private var database: FirebaseDatabase = FirebaseDatabase.getInstance()
     private var auth: FirebaseAuth = Firebase.auth
-    private var storage = Firebase.storage
+    private var storage = FirebaseStorage.getInstance().reference
 
     private var userRef : DatabaseReference? = null
-    private var storageRef: StorageReference? = null
+  //  private var storageRef: StorageReference? = null
     companion object {
         var INSTANCE: FireBaseService? = null
             get() {
@@ -35,7 +36,7 @@ class FireBaseService :CallsAPi {
     init {
         // init firebase
         userRef = database.getReference().child("users")
-        storageRef = storage.reference
+        //storageRef = storage
 //        auth!!.signInAnonymously().addOnCompleteListener {
 //            if (it.isSuccessful) {
 //                //val user = auth!!.currentUser
@@ -71,17 +72,20 @@ class FireBaseService :CallsAPi {
 
     override fun uploadFile(userId: String, file: File, callback: (Boolean) -> Unit) {
         // refrence to the node of user
-        val userRef = userRef!!.child("audio/$userId").removeValue()
-        val audioFileRef = storage.reference.child("audio/$userId/${file.name}")
-        val fileUri = Uri.fromFile(file)
 
-        audioFileRef.putFile(fileUri).addOnSuccessListener {
-            updateSoundSample(userId, it.metadata?.path.toString()) { success ->
-              callback(success)
+        val audioFileRef = storage.child("audio/$userId/sample.aac")
+        storage.child("audio/$userId").delete().addOnCompleteListener(){
+            val fileUri = Uri.fromFile(file)
+
+            audioFileRef.putFile(fileUri).addOnSuccessListener {
+                updateSoundSample(userId, it.metadata?.path.toString()) { success ->
+                    callback(success)
+                }
+            }.addOnFailureListener {
+                callback(false)
             }
-        }.addOnFailureListener {
-            callback(false)
         }
+
     }
 
     override fun createUser(user: User, callback: (String?) -> Unit) {
@@ -106,10 +110,10 @@ class FireBaseService :CallsAPi {
 
     override fun getFile(userId: String, callback: (File?) -> Unit) {
         // Create a reference to the file you want to download
-        val audioFileRef = storageRef?.child("audio/sample.aac")
+        val audioFileRef = storage.child("audio/$userId/sample.aac")
 
         // Create a local file where the downloaded file will be stored
-        val localFile = File.createTempFile("downloaded_audio", "aac", App.Companion.context?.cacheDir)
+        val localFile = File.createTempFile("downloaded_audio", ".aac", App.Companion.context?.cacheDir)
 
         // Download the file to the local file
         audioFileRef?.getFile(localFile)

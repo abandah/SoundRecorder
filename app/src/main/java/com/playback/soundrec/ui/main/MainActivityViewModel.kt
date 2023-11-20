@@ -9,7 +9,7 @@ class MainActivityViewModel : BaseViewModel() {
     var isRecording: MutableLiveData<Boolean> = MutableLiveData(false)
     var isAdmin: MutableLiveData<Boolean> = MutableLiveData(false)
     var recordInfo: MutableLiveData<String> = MutableLiveData("")
-    var progressTime: MutableLiveData<String> = MutableLiveData("")
+    var progressTime: MutableLiveData<String> = MutableLiveData("00:00:00")
 
     var mainActivityNav: MainActivityNav? = null
 

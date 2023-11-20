@@ -89,14 +89,34 @@
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="5dp"
                     android:shadowColor="@color/white"
-                    app:cardBackgroundColor="@android:color/transparent"
-                    android:layout_marginBottom="@dimen/spacing_huge">
+                    app:cardBackgroundColor="@android:color/transparent">
                     <LinearLayout
                         android:id="@+id/ll_settings"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical" />
                 </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/tvSoundSample"
+                    style="@style/Text.SectionLabel"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:layout_marginTop="@dimen/spacing_double"
+                    android:gravity="start|center_vertical"
+                    android:text="Sound Sample" />
+                <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                    android:layout_width="wrap_content"
+                    android:visibility="invisible"
+                    android:id="@+id/btnPlaySample"
+                    android:layout_gravity="center"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/spacing_normal"
+                    android:text="Play Sample"
+                    android:layout_marginBottom="@dimen/spacing_huge"/>
+
 
 
             </LinearLayout>

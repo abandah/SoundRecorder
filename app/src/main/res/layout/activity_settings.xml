@@ -141,6 +141,7 @@
 
         <com.playback.soundrec.widget.SettingView
             android:id="@+id/setting_recording_format"
+            android:visibility="gone"
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

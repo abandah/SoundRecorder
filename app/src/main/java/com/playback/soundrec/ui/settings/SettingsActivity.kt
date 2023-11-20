@@ -31,9 +31,9 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
     }
 
     private var sendSampleToServer: SwitchMaterial? = null
-    private var formatSetting: SettingView? = null
-    private var formats: Array<String>? = null
-    private var formatsKeys: Array<String>? = null
+//    private var formatSetting: SettingView? = null
+//    private var formats: Array<String>? = null
+//    private var formatsKeys: Array<String>? = null
     private var delay: LinearLayout? = null
 
     private var sampleRateSetting: SettingView? = null
@@ -70,30 +70,30 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
 
             }
         }
-        formatSetting = binding?.settingRecordingFormat
-        formats = resources.getStringArray(R.array.formats2)
-        formatsKeys = arrayOf<String>(
-            AppConstants.FORMAT_PCM,
-            AppConstants.FORMAT_AAC
-        )
-        formatSetting!!.setData(formats, formatsKeys)
-        formatSetting!!.setOnChipCheckListener { key, name, checked ->
-            Pref.getInstance().getUser()?.let { user ->
-
-                FireBaseService.INSTANCE?.updateField(
-                    "setting",
-                    Pref.getInstance().getUser()?.user_id!!,
-                    "defaultFormat",
-                    key
-                ) {
-                    user.setting?.defaultFormat = key
-                    Pref.getInstance().saveUser(user)
-                }
-            }
-
-        }
-        formatSetting?.setTitle(R.string.recording_format)
-
+//        formatSetting = binding?.settingRecordingFormat
+//        formats = resources.getStringArray(R.array.formats2)
+//        formatsKeys = arrayOf<String>(
+//            AppConstants.FORMAT_PCM,
+//            AppConstants.FORMAT_AAC
+//        )
+//        formatSetting!!.setData(formats, formatsKeys)
+//        formatSetting!!.setOnChipCheckListener { key, name, checked ->
+//            Pref.getInstance().getUser()?.let { user ->
+//
+//                FireBaseService.INSTANCE?.updateField(
+//                    "setting",
+//                    Pref.getInstance().getUser()?.user_id!!,
+//                    "defaultFormat",
+//                    key
+//                ) {
+//                    user.setting?.defaultFormat = key
+//                    Pref.getInstance().saveUser(user)
+//                }
+//            }
+//
+//        }
+//        formatSetting?.setTitle(R.string.recording_format)
+//
 
 
         sampleRateSetting = binding?.settingFrequency
@@ -177,10 +177,10 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityNav {
 
 
         // fill default values
-        val format = Pref.getInstance().getUser()?.setting?.defaultFormat
+      //  val format = Pref.getInstance().getUser()?.setting?.defaultFormat
         val sampleRate = Pref.getInstance().getUser()?.setting?.defaultSampleRate.toString()
         val delay = Pref.getInstance().getUser()?.setting?.defaultDelay
-        formatSetting!!.setSelected(format)
+       // formatSetting!!.setSelected(format)
         sampleRateSetting!!.setSelected(sampleRate)
         sendSampleToServer!!.isChecked =
             Pref.getInstance().getUser()?.setting?.defaultEnableSendDataToServer?.toLong() == 1L

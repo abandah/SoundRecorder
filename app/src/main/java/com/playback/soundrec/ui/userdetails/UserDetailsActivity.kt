@@ -1,6 +1,8 @@
 package com.playback.soundrec.ui.userdetails
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
@@ -18,12 +20,17 @@ import com.playback.soundrec.model.User
 import com.playback.soundrec.providers.FireBaseService
 import com.playback.soundrec.ui.settings.SettingsMapper
 import com.playback.soundrec.widget.SettingView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class UserDetailsActivity : BaseActivity() {
     private lateinit var binding: ActivityUserDetailsBinding
     private lateinit var userId: String
     private lateinit var firebaseService: FireBaseService
+    private val backgroundScope = CoroutineScope(Dispatchers.IO)
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,17 +75,17 @@ class UserDetailsActivity : BaseActivity() {
                 SettingsMapper.SAMPLE_RATE_48000
             ), resources.getStringArray(R.array.sample_rates2)
         )
-        addView("Format",
-            "setting",
-            "defaultFormat",
-            user.setting?.defaultFormat,
-            EditViews.MULTIABLE,
-            arrayOf<String>(
-                AppConstants.FORMAT_PCM,
-                AppConstants.FORMAT_AAC
-            ),
-            resources.getStringArray(R.array.formats2)
-        )
+//        addView("Format",
+//            "setting",
+//            "defaultFormat",
+//            user.setting?.defaultFormat,
+//            EditViews.MULTIABLE,
+//            arrayOf<String>(
+//                AppConstants.FORMAT_PCM,
+//                AppConstants.FORMAT_AAC
+//            ),
+//            resources.getStringArray(R.array.formats2)
+//        )
         addView("Send data to server",
             "setting",
             "defaultEnableSendDataToServer",
@@ -98,6 +105,40 @@ class UserDetailsActivity : BaseActivity() {
             user.setting?.defaultSoundSampleDuration.toString(),
             EditViews.Int
         )
+        mediaPlayer = MediaPlayer()
+        binding.btnPlaySample?.visibility = View.INVISIBLE
+        binding.tvSoundSample?.visibility = View.INVISIBLE
+        backgroundScope.launch {
+            FireBaseService.INSTANCE?.getFile(user.user_id!!) { url ->
+                runOnUiThread {
+                    if(url == null) {
+                        return@runOnUiThread
+                    }
+                    mediaPlayer?.setDataSource(url.path)
+                    mediaPlayer?.setOnPreparedListener(){
+                        binding.btnPlaySample?.visibility = View.VISIBLE
+                        binding.tvSoundSample?.visibility = View.VISIBLE
+                    }
+                    mediaPlayer?.prepare()
+                    binding.btnPlaySample?.setOnTouchListener() { v, event ->
+                        when (event?.action) {
+                            MotionEvent.ACTION_DOWN -> {
+                                mediaPlayer?.start()
+                            }
+                            MotionEvent.ACTION_UP -> {
+                                mediaPlayer?.pause()
+                                mediaPlayer?.seekTo(0)
+                            }
+                        }
+                        true
+                    }
+
+
+
+                }
+            }
+        }
+
 
     }
 
@@ -233,6 +274,12 @@ class UserDetailsActivity : BaseActivity() {
 
             updateCallback(newValue)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     fun onBackClick(view: View) {}

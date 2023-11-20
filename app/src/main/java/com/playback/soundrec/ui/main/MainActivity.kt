@@ -107,8 +107,7 @@ class MainActivity : BaseActivity(), MainActivityNav {
         runOnUiThread(
             Runnable {
                 Pref.getInstance().getUser()?.let {
-                    viewModel?.recordInfo?.value = "${it.setting?.defaultFormat} " +
-                            ", ${it.setting?.defaultSampleRate}KHz " +
+                    viewModel?.recordInfo?.value ="${it.setting?.defaultSampleRate}KHz " +
                             "\n with ${it.setting?.defaultDelay}s delay"
                 }
 //                viewModel?.recordInfo?.value = "${Pref.getInstance().getFormat()} " +
@@ -139,7 +138,7 @@ class MainActivity : BaseActivity(), MainActivityNav {
 
         // ... Initialize audioRecord and audioTrack ...
         audioRecord = AudioRecord(
-            MediaRecorder.AudioSource.MIC,
+            MediaRecorder.AudioSource.DEFAULT,
             intRecordSampleRate,
             AudioFormat.CHANNEL_IN_MONO,
             AudioFormat.ENCODING_PCM_16BIT,
@@ -224,16 +223,16 @@ class MainActivity : BaseActivity(), MainActivityNav {
     private  fun processSampledAudio(sampleBuffer: LinkedList<ShortArray>) {
         if(isACCMFileSaved) return // Don't save the sample if it's already saved
         isACCMFileSaved = true // Set the flag to true after saving as ACCM file
-        var type = Pref.getInstance().getUser()?.setting?.defaultFormat
-        if (type == "pcm") {
-            backgroundScope.launch {
-                saveAsPCMFile(sampleBuffer)
-            }
-        } else {
+//        var type = Pref.getInstance().getUser()?.setting?.defaultFormat
+//        if (type == "pcm") {
+//            backgroundScope.launch {
+//                saveAsPCMFile(sampleBuffer)
+//            }
+//        } else {
             backgroundScope.launch {
                 saveAsACCMFile(sampleBuffer)
             }
-        }
+     //   }
 
     }
 
@@ -425,6 +424,8 @@ class MainActivity : BaseActivity(), MainActivityNav {
         if (audioRecord?.state == AudioRecord.STATE_INITIALIZED && viewModel?.isRecording?.value == true) {
             audioRecord?.stop()
         }
+        viewModel?.progressTime?.value = "00:00:00"
+        viewModel?.recordInfo?.value = ""
         // stops the recording activity
         viewModel?.isRecording?.value = false
         audioTrack?.stop()

@@ -16,7 +16,7 @@ class User() : Serializable{
 
     class Setting :Serializable{
         var defaultSampleRate : String? = "44100"
-        var defaultFormat: String? = AppConstants.FORMAT_AAC
+      //  var defaultFormat: String? = AppConstants.FORMAT_AAC
         var defaultEnableSendDataToServer : String?= "0"
         var defaultDelay: String? = "0"
         var defaultTimeToStartSoundSample: String? = "0"
