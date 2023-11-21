@@ -56,7 +56,7 @@ class LoginActivity : BaseActivity(),LoginNav{
     private fun  createProgressDialog(){
         val container = layoutInflater.inflate(R.layout.view_progrss, null) as LinearLayout
         loadingDialog = AlertDialog.Builder(this, R.style.MyDialogTheme)
-            .setTitle("Sending sample to server")
+            .setTitle("Logging in ...")
             .setView(container).create()
     }
 }
