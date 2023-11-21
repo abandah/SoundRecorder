@@ -14,13 +14,16 @@ class LoginActivityViewModel:BaseViewModel() {
     var nav: LoginNav? = null
 
     fun login(view : View){
+        nav?.showLoading()
         //validate
         if(username.value.isNullOrEmpty()){
             toast("Please enter username")
+            nav?.hideLoading()
             return
         }
         if(password.value.isNullOrEmpty()){
             toast("Please enter password")
+            nav?.hideLoading()
             return
         }
         //login
@@ -28,8 +31,10 @@ class LoginActivityViewModel:BaseViewModel() {
             if(it != null){
                 nav?.toast("Login success")
                 Pref.getInstance().saveUser(it)
+                nav?.hideLoading()
                 nav?.openMainActivity()
             }else{
+                nav?.hideLoading()
                 nav?.toast("Login failed")
             }
         }

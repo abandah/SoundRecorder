@@ -6,6 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:background="@drawable/gradient_gray"
+
     android:gravity="center"
     android:padding="16dp">
     <ProgressBar

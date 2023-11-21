@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@drawable/gradient_gray"
         tools:context="com.playback.soundrec.ui.main.MainActivity">
 
         <LinearLayout
@@ -36,8 +37,7 @@
                 android:src="@drawable/waveform"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/md_yellow_A700" />
+                app:layout_constraintTop_toTopOf="parent" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -56,6 +56,10 @@
                 android:layout_marginTop="@dimen/spacing_normal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:hintTextColor="@color/white"
+                android:textColorHint="@color/white_transparent_20"
+                app:boxStrokeColor="@color/tv_boarder"
+                app:cursorColor="@color/white"
                 android:hint="@string/username">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -72,6 +76,11 @@
                 android:id="@+id/tv_pass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:hintTextColor="@color/white"
+                android:textColorHint="@color/white_transparent_20"
+
+                app:boxStrokeColor="@color/tv_boarder"
+                app:cursorColor="@color/white"
                 android:hint="@string/username">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -91,7 +100,7 @@
                 android:id="@+id/dialog_details_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/md_yellow_A700"
+                android:textColor="@color/white"
                 android:onClick="@{viewModel::login}"
                 android:textSize="@dimen/text_normal"
                 android:paddingStart="@dimen/spacing_normal"
