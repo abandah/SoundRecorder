@@ -11,232 +11,237 @@
 
     </data>
 
-    <LinearLayout
-        tools:viewBindingIgnore="true"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         tools:context="com.playback.soundrec.ui.main.MainActivity">
-
         <LinearLayout
+            tools:viewBindingIgnore="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/btn_import"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@null"
-                android:layout_gravity="start"
-                android:onClick="@{viewModel::onExitClick}"
-                android:background="?android:selectableItemBackgroundBorderless"
-                android:padding="@dimen/spacing_normal"
-                android:src="@drawable/ic_import" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:layout_marginStart="@dimen/spacing_double"
-                android:layout_marginEnd="@dimen/spacing_double"
-                android:layout_marginTop="@dimen/spacing_medium"
-                android:layout_marginBottom="@dimen/spacing_normal"
-                android:textColor="@color/text_primary_light"
-                android:textSize="@dimen/text_xlarge"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/app_name" />
-
-            <ImageButton
-                android:id="@+id/btn_Options"
-                android:layout_width="@dimen/bottom_pnl_small_btn_size"
-                android:layout_height="@dimen/bottom_pnl_small_btn_size"
-                android:visibility="invisible"
-                android:adjustViewBounds="true"
-                android:background="?android:selectableItemBackgroundBorderless"
-                android:contentDescription="@null"
-                android:layout_gravity="end"
-                android:scaleType="center"
-                android:src="@drawable/ic_more_vert" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
+            android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btn_import"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@null"
+                    android:layout_gravity="start"
+                    android:onClick="@{viewModel::onExitClick}"
+                    android:background="?android:selectableItemBackgroundBorderless"
+                    android:padding="@dimen/spacing_normal"
+                    android:src="@drawable/ic_import" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:layout_marginStart="@dimen/spacing_double"
+                    android:layout_marginEnd="@dimen/spacing_double"
+                    android:layout_marginTop="@dimen/spacing_medium"
+                    android:layout_marginBottom="@dimen/spacing_normal"
+                    android:textColor="@color/text_primary_light"
+                    android:textSize="@dimen/text_xlarge"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/app_name" />
+
+                <ImageButton
+                    android:id="@+id/btn_Options"
+                    android:layout_width="@dimen/bottom_pnl_small_btn_size"
+                    android:layout_height="@dimen/bottom_pnl_small_btn_size"
+                    android:visibility="invisible"
+                    android:adjustViewBounds="true"
+                    android:background="?android:selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"
+                    android:layout_gravity="end"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_more_vert" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:padding="@dimen/spacing_normal"
+                    >
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:scaleType="centerInside"
+                        android:layout_gravity="center"
+                        android:visibility="@{viewModel.isRecording ? View.GONE : View.VISIBLE}"
+                        android:src="@drawable/waveform"/>
+
+                    <LinearLayout
+                        android:id="@+id/ll_waveform"
+                        android:layout_width="match_parent"
+                        android:visibility="@{viewModel.isRecording ? View.VISIBLE : View.GONE}"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            style="@style/Text.SectionLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="Recording" />
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="5dp"
+                            android:shadowColor="@color/white"
+                            app:cardBackgroundColor="@android:color/transparent">
+                            <com.playback.soundrec.widget.WaveformView
+                                android:id="@+id/waveformView"
+                                android:layout_width="match_parent"
+                                android:layout_height="150dp" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <TextView
+                            style="@style/Text.SectionLabel"
+                            android:layout_marginTop="@dimen/spacing_normal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="Playback" />
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="5dp"
+                            android:shadowColor="@color/white"
+                            app:cardBackgroundColor="@android:color/transparent">
+                            <com.playback.soundrec.widget.WaveformView
+                                android:id="@+id/waveformView2"
+                                android:layout_width="match_parent"
+                                android:layout_height="150dp" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+            </LinearLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:padding="@dimen/spacing_normal"
-                >
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:scaleType="centerInside"
-                    android:layout_gravity="center"
-                    android:visibility="@{viewModel.isRecording ? View.GONE : View.VISIBLE}"
-                    android:src="@drawable/waveform"/>
+                android:layout_height="wrap_content">
+
 
                 <LinearLayout
-                    android:id="@+id/ll_waveform"
                     android:layout_width="match_parent"
-                    android:visibility="@{viewModel.isRecording ? View.VISIBLE : View.GONE}"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txt_progress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewModel.progressTime}"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/text_primary_light"
+                        android:textSize="54sp"
+                        android:textStyle="bold"
+                        tools:text="00:00" />
+
+
+                    <TextView
+                        android:id="@+id/txt_record_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:layout_marginStart="@dimen/spacing_huge"
+                        android:layout_marginEnd="@dimen/spacing_huge"
+                        android:layout_marginBottom="@dimen/spacing_xsmall"
+                        android:ellipsize="end"
+                        android:text="@{viewModel.recordInfo}"
+                        android:maxLines="2"
+                        android:fontFamily="sans-serif-light"
+                        android:textColor="@color/text_primary_light2"
+                        android:textSize="@dimen/text_normal"
+                        tools:text="M4a, 44.1kHz, 128kbps, Stereo" />
+                </LinearLayout>
+
+
+            </FrameLayout>
+
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_small">
+
+                <ImageButton
+                    android:id="@+id/btn_settings"
+                    android:layout_width="@dimen/bottom_pnl_btn_size"
+                    android:layout_height="@dimen/bottom_pnl_btn_size"
+                    android:layout_marginTop="@dimen/spacing_small"
+                    android:adjustViewBounds="true"
+                    android:visibility="@{viewModel.isRecording ? View.GONE : View.VISIBLE}"
+                    android:background="?android:selectableItemBackgroundBorderless"
+                    android:layout_gravity="start"
+                    android:clickable="true"
+                    android:contentDescription="@string/settings"
+                    android:onClick="@{viewModel::onSettingsClick}"
+                    android:focusable="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_settings" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:orientation="vertical">
-                    <TextView
-                        style="@style/Text.SectionLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="Recording" />
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:cardCornerRadius="5dp"
-                        android:shadowColor="@color/white"
-                        app:cardBackgroundColor="@android:color/transparent">
-                        <com.playback.soundrec.widget.WaveformView
-                            android:id="@+id/waveformView"
-                            android:layout_width="match_parent"
-                            android:layout_height="150dp" />
-                    </com.google.android.material.card.MaterialCardView>
+                    android:orientation="horizontal">
 
-                    <TextView
-                        style="@style/Text.SectionLabel"
-                        android:layout_marginTop="@dimen/spacing_normal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="Playback" />
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:cardCornerRadius="5dp"
-                        android:shadowColor="@color/white"
-                        app:cardBackgroundColor="@android:color/transparent">
-                        <com.playback.soundrec.widget.WaveformView
-                            android:id="@+id/waveformView2"
-                            android:layout_width="match_parent"
-                            android:layout_height="150dp" />
-                    </com.google.android.material.card.MaterialCardView>
+
+                    <androidx.appcompat.widget.AppCompatToggleButton
+                        android:id="@+id/btn_record"
+                        android:layout_width="@dimen/bottom_pnl_btn_size"
+                        android:layout_height="@dimen/bottom_pnl_btn_size"
+                        android:layout_margin="@dimen/spacing_small"
+                        android:adjustViewBounds="true"
+                        android:layout_gravity="center"
+                        android:scaleType="center"
+                        android:checked="@{viewModel.isRecording}"
+                        android:onClick="@{viewModel::onRecordClick}"
+                        style="@style/toggleButton"
+                        android:background="@drawable/ic_record_toggle_bg" />
+
 
                 </LinearLayout>
+
+                <ImageButton
+                    android:layout_width="@dimen/bottom_pnl_btn_size"
+                    android:layout_height="@dimen/bottom_pnl_btn_size"
+                    android:layout_marginTop="@dimen/spacing_small"
+                    android:adjustViewBounds="true"
+                    android:visibility="@{viewModel.isAdmin ? View.VISIBLE : View.GONE}"
+                    android:background="?android:selectableItemBackgroundBorderless"
+                    android:layout_gravity="end"
+                    android:clickable="true"
+                    android:contentDescription="@string/settings"
+                    android:onClick="@{viewModel::onAdminClick}"
+                    android:focusable="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/baseline_admin_panel_settings_24" />
 
             </FrameLayout>
 
         </LinearLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/txt_progress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewModel.progressTime}"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/text_primary_light"
-                    android:textSize="54sp"
-                    android:textStyle="bold"
-                    tools:text="00:00" />
-
-
-                <TextView
-                    android:id="@+id/txt_record_info"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center_horizontal"
-                    android:layout_marginStart="@dimen/spacing_huge"
-                    android:layout_marginEnd="@dimen/spacing_huge"
-                    android:layout_marginBottom="@dimen/spacing_xsmall"
-                    android:ellipsize="end"
-                    android:text="@{viewModel.recordInfo}"
-                    android:maxLines="2"
-                    android:fontFamily="sans-serif-light"
-                    android:textColor="@color/text_primary_light2"
-                    android:textSize="@dimen/text_normal"
-                    tools:text="M4a, 44.1kHz, 128kbps, Stereo" />
-            </LinearLayout>
-
-
-        </FrameLayout>
-
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_small">
-
-            <ImageButton
-                android:id="@+id/btn_settings"
-                android:layout_width="@dimen/bottom_pnl_btn_size"
-                android:layout_height="@dimen/bottom_pnl_btn_size"
-                android:layout_marginTop="@dimen/spacing_small"
-                android:adjustViewBounds="true"
-                android:visibility="@{viewModel.isRecording ? View.GONE : View.VISIBLE}"
-                android:background="?android:selectableItemBackgroundBorderless"
-                android:layout_gravity="start"
-                android:clickable="true"
-                android:contentDescription="@string/settings"
-                android:onClick="@{viewModel::onSettingsClick}"
-                android:focusable="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_settings" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
-
-
-                <androidx.appcompat.widget.AppCompatToggleButton
-                    android:id="@+id/btn_record"
-                    android:layout_width="@dimen/bottom_pnl_btn_size"
-                    android:layout_height="@dimen/bottom_pnl_btn_size"
-                    android:layout_margin="@dimen/spacing_small"
-                    android:adjustViewBounds="true"
-                    android:layout_gravity="center"
-                    android:scaleType="center"
-                    android:checked="@{viewModel.isRecording}"
-                    android:onClick="@{viewModel::onRecordClick}"
-                    style="@style/toggleButton"
-                    android:background="@drawable/ic_record_toggle_bg" />
-
-
-            </LinearLayout>
-
-            <ImageButton
-                android:layout_width="@dimen/bottom_pnl_btn_size"
-                android:layout_height="@dimen/bottom_pnl_btn_size"
-                android:layout_marginTop="@dimen/spacing_small"
-                android:adjustViewBounds="true"
-                android:visibility="@{viewModel.isAdmin ? View.VISIBLE : View.GONE}"
-                android:background="?android:selectableItemBackgroundBorderless"
-                android:layout_gravity="end"
-                android:clickable="true"
-                android:contentDescription="@string/settings"
-                android:onClick="@{viewModel::onAdminClick}"
-                android:focusable="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/baseline_admin_panel_settings_24" />
-
-        </FrameLayout>
-
-    </LinearLayout>
+    </FrameLayout>
 </layout>

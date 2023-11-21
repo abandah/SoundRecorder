@@ -7,18 +7,17 @@ import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioRecord
 import android.media.AudioTrack
-import android.media.MediaCodec
-import android.media.MediaCodecInfo
-import android.media.MediaFormat
-import android.media.MediaMuxer
 import android.media.MediaRecorder
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.View
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatToggleButton
 import androidx.lifecycle.ViewModelProvider
 import com.playback.soundrec.Pref
+import com.playback.soundrec.R
 import com.playback.soundrec.bases.BaseActivity
 import com.playback.soundrec.databinding.ActivityMainBinding
 import com.playback.soundrec.providers.FireBaseService
@@ -28,23 +27,20 @@ import com.playback.soundrec.ui.userlist.UserListActivity
 import com.playback.soundrec.widget.WaveformView
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
-import java.lang.Integer.min
 import java.nio.ByteBuffer
 import java.util.LinkedList
 import java.util.Queue
 import kotlinx.coroutines.*
 import java.io.DataOutputStream
-import java.io.RandomAccessFile
 import java.nio.ByteOrder
-import kotlin.experimental.and
 
 class MainActivity : BaseActivity(), MainActivityNav {
+    private var sampleBuffer: LinkedList<ShortArray>? = null
     var binding: ActivityMainBinding? = null
     var viewModel: MainActivityViewModel? = null
-    private val backgroundScope = CoroutineScope(Dispatchers.IO)
-    val outputFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Asample.wav")
-
+    private val backgroundScope = CoroutineScope(Dispatchers.Main)
+    private var outputFile: File? = null
+    var loadingDialog: AlertDialog? = null
     var waveformView: WaveformView? = null
         get() {
             if (field == null) {
@@ -82,6 +78,7 @@ class MainActivity : BaseActivity(), MainActivityNav {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        outputFile = File(cacheDir, "sample.wav")
         FireBaseService.INSTANCE?.let { fi ->
             fi.getUserInfo(Pref.getInstance().getUser()!!.user_id!!) {
                 if (it != null) {
@@ -94,6 +91,7 @@ class MainActivity : BaseActivity(), MainActivityNav {
                     viewModel?.isAdmin?.value = it.admin?.toLong() == 1L
 
                     setContentView(binding?.root)
+                    createProgressDialog()
 
                 } else {
                     Pref.getInstance().saveUser(null)
@@ -187,7 +185,8 @@ class MainActivity : BaseActivity(), MainActivityNav {
                 // Update your TextView or UI element with 'time'
             }
             val tempBuffer = ShortArray(intBufferSize!!)
-            val readSize = audioRecord?.read(tempBuffer, 0, intBufferSize!!, AudioRecord.READ_BLOCKING) ?: 0
+            val readSize =
+                audioRecord?.read(tempBuffer, 0, intBufferSize!!, AudioRecord.READ_BLOCKING) ?: 0
 
             waveformView?.setAudioData(tempBuffer)
             if (readSize > 0) {
@@ -209,6 +208,7 @@ class MainActivity : BaseActivity(), MainActivityNav {
                 // Check if the queue has enough data for the desired delay and playback audio
                 if (audioQueue.size >= buffersNeededForDelay) {
                     val bufferToPlay = audioQueue.poll()
+                    if (viewModel?.isRecording?.value == false) return
                     audioTrack?.write(bufferToPlay, 0, bufferToPlay.size, AudioTrack.WRITE_BLOCKING)
 
                     waveformView2?.setAudioData(bufferToPlay)
@@ -238,23 +238,30 @@ class MainActivity : BaseActivity(), MainActivityNav {
 
     private fun processSampledAudio(sampleBuffer: LinkedList<ShortArray>) {
         if (isACCMFileSaved) return // Don't save the sample if it's already saved
-        isACCMFileSaved = true // Set the flag to true after saving as ACCM file
-//        var type = Pref.getInstance().getUser()?.setting?.defaultFormat
-//        if (type == "pcm") {
-//            backgroundScope.launch {
-//                saveAsPCMFile(sampleBuffer)
-//            }
-//        } else {
-        //   backgroundScope.launch {
-        saveToWav(sampleBuffer)
-        //    saveAsAacFile(sampleBuffer)
+        isACCMFileSaved = true
 
-     //   }
-        //   }
-        //   }
+        this.sampleBuffer = sampleBuffer
 
     }
-    fun saveToWav(sampleBuffer: LinkedList<ShortArray>) {
+
+    fun startSaving() {
+        showLoading()
+
+        val success = saveToWav(this.sampleBuffer!!)
+        if (success) {
+            uploadAndHandleFile()
+        } else {
+            hideLoading()
+            runOnUiThread {
+                Toast.makeText(this@MainActivity, "Failed to save file", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    }
+
+    fun saveToWav(originalSampleBuffer: LinkedList<ShortArray>): Boolean {
+        val sampleBuffer = LinkedList(originalSampleBuffer)
+
         val sampleRate = 44100 // Change this to your actual sample rate
         val channels = 1 // Mono
         val bitsPerSample = 16
@@ -290,9 +297,29 @@ class MainActivity : BaseActivity(), MainActivityNav {
                 }
             }
         }
-        FireBaseService.INSTANCE?.uploadFile(Pref.getInstance().getUser()?.user_id!!, outputFile) {
-            if (it) {
-                outputFile.delete()
+        return true
+
+
+    }
+
+    fun uploadAndHandleFile() {
+        // Execute the upload and post-upload logic here
+        // This function can be called right after saveToWav completes
+        FireBaseService.INSTANCE?.uploadFile(
+            Pref.getInstance().getUser()?.user_id!!, outputFile!!
+        ) { success ->
+            if (success) {
+                // Perform actions after successful upload
+                runOnUiThread {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Sound sample sent successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                outputFile!!.delete()
+                hideLoading()
+
             }
         }
     }
@@ -302,6 +329,7 @@ class MainActivity : BaseActivity(), MainActivityNav {
         buffer.putShort(this)
         return buffer.order(ByteOrder.BIG_ENDIAN).getShort(0)
     }
+
     private fun startRecording() {
         isACCMFileSaved = false // Reset the flag when starting a new recording
 
@@ -316,6 +344,12 @@ class MainActivity : BaseActivity(), MainActivityNav {
     }
 
     private fun stopRecording() {
+
+        sampleBuffer?.let {
+            startSaving()
+        }
+
+
         // Ensure we're currently recording before attempting to stop
         if (audioRecord?.state == AudioRecord.STATE_INITIALIZED && viewModel?.isRecording?.value == true) {
             audioRecord?.stop()
@@ -356,5 +390,25 @@ class MainActivity : BaseActivity(), MainActivityNav {
     override fun onAdminClick(view: View) {
         val intent = Intent(this, UserListActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+    }
+
+    fun showLoading() {
+        hideLoading()
+        loadingDialog?.show()
+    }
+
+    private fun hideLoading() {
+        loadingDialog?.dismiss()
+    }
+    private fun  createProgressDialog(){
+        val container = layoutInflater.inflate(R.layout.view_progrss, null) as LinearLayout
+        loadingDialog = AlertDialog.Builder(this, R.style.MyDialogTheme)
+            .setTitle("Sending sample to server")
+            .setView(container).create()
     }
 }

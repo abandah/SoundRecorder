@@ -56,5 +56,6 @@
     <string name="cancel">Cancel</string>
     <string name="ChangePassword">Change Password</string>
     <string name="play">Play</string>
+    <string name="sendingSampleToServer">Sending Sample To Server</string>
 
 </resources>
