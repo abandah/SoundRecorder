@@ -2,16 +2,15 @@ package com.playback.soundrec.ui.userdetails
 
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.switchmaterial.SwitchMaterial
-import com.playback.soundrec.AppConstants
 import com.playback.soundrec.R
 import com.playback.soundrec.bases.BaseActivity
 import com.playback.soundrec.databinding.ActivityUserDetailsBinding
@@ -23,6 +22,7 @@ import com.playback.soundrec.widget.SettingView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 
 class UserDetailsActivity : BaseActivity() {
@@ -57,11 +57,12 @@ class UserDetailsActivity : BaseActivity() {
         binding?.btnBack?.setOnClickListener {
             finish()
         }
-        addView("Email",null, "userName", user.userName, EditViews.String)
-        addView("Name",null, "name", user.name, EditViews.String)
-        addView("Phone number",null, "phonenumber", user.phonenumber, EditViews.String)
-        addView("Password",null, "password", user.password, EditViews.String)
-        addView("Sample Rate",
+        addView("Email", null, "userName", user.userName, EditViews.String)
+        addView("Name", null, "name", user.name, EditViews.String)
+        addView("Phone number", null, "phonenumber", user.phonenumber, EditViews.String)
+        addView("Password", null, "password", user.password, EditViews.String)
+        addView(
+            "Sample Rate",
             "setting",
             "defaultSampleRate",
             user.setting?.defaultSampleRate.toString(),
@@ -86,64 +87,94 @@ class UserDetailsActivity : BaseActivity() {
 //            ),
 //            resources.getStringArray(R.array.formats2)
 //        )
-        addView("Send data to server",
+        addView(
+            "Send data to server",
             "setting",
             "defaultEnableSendDataToServer",
             user.setting?.defaultEnableSendDataToServer.toString(),
             EditViews.Boolean
         )
-        addView("Delay","setting", "defaultDelay", user.setting?.defaultDelay.toString(), EditViews.Int)
-        addView("Start Sample From ",
+        addView(
+            "Delay",
+            "setting",
+            "defaultDelay",
+            user.setting?.defaultDelay.toString(),
+            EditViews.Int
+        )
+        addView(
+            "Start Sample From ",
             "setting",
             "defaultTimeToStartSoundSample",
             user.setting?.defaultTimeToStartSoundSample.toString(),
             EditViews.Int
         )
-        addView("Sample Duration",
+        addView(
+            "Sample Duration",
             "setting",
             "defaultSoundSampleDuration",
             user.setting?.defaultSoundSampleDuration.toString(),
             EditViews.Int
         )
         mediaPlayer = MediaPlayer()
-        binding.btnPlaySample?.visibility = View.INVISIBLE
-        binding.tvSoundSample?.visibility = View.INVISIBLE
-        backgroundScope.launch {
-            FireBaseService.INSTANCE?.getFile(user.user_id!!) { url ->
-                runOnUiThread {
-                    if(url == null) {
-                        return@runOnUiThread
-                    }
-                    mediaPlayer?.setDataSource(url.path)
-                    mediaPlayer?.setOnPreparedListener(){
-                        binding.btnPlaySample?.visibility = View.VISIBLE
-                        binding.tvSoundSample?.visibility = View.VISIBLE
-                    }
-                    mediaPlayer?.prepare()
-                    binding.btnPlaySample?.setOnTouchListener() { v, event ->
-                        when (event?.action) {
-                            MotionEvent.ACTION_DOWN -> {
-                                mediaPlayer?.start()
-                            }
-                            MotionEvent.ACTION_UP -> {
-                                mediaPlayer?.pause()
-                                mediaPlayer?.seekTo(0)
-                            }
-                        }
-                        true
-                    }
-
-
-
-                }
-            }
-        }
+        checkSoundSample(user)
 
 
     }
 
+    private fun checkSoundSample(user: User) {
+        binding.llSoundSample?.visibility = View.INVISIBLE
+
+        FireBaseService.INSTANCE?.getFile(user.user_id!!) { file ->
+            if (file == null || !file.exists() || file.length() == 0L) {
+                Log.e("MediaPlayerError", "File is null, does not exist, or is empty.")
+                return@getFile
+            }
+
+            try {
+                mediaPlayer?.apply {
+                    setDataSource(file.path)
+                    setOnPreparedListener {
+                        binding.llSoundSample?.visibility = View.VISIBLE
+                    }
+                    setOnErrorListener { _, what, extra ->
+                        Log.e("TAGTAG", "Error occurred: what=$what, extra=$extra")
+                        true // Return true if the error was handled
+                    }
+                    prepareAsync() // Use prepareAsync for network or large files
+                }
+
+                binding.btnPlaySample?.setOnClickListener() {
+                    mediaPlayer?.pause()
+                    mediaPlayer?.seekTo(0)
+                    mediaPlayer?.start()
+
+                }
+                binding.btnStopSample?.setOnClickListener() {
+
+                            mediaPlayer?.pause()
+                            mediaPlayer?.seekTo(0)
+
+                }
+                binding?.btnDeleteSample?.setOnClickListener {
+                    backgroundScope.launch {
+                        firebaseService.deleteFile(user.user_id!!) { isSuccess ->
+                            if (isSuccess) {
+                                checkSoundSample(user)
+                            }
+                        }
+                    }
+                }
+
+            } catch (e: IOException) {
+                Log.e("TAGTAG", "IOException preparing MediaPlayer: ${e.message}")
+            } catch (e: IllegalArgumentException) {
+                Log.e("TAGTAG", "IllegalArgumentException: ${e.message}")
+            }
+        }
+    }
+
     fun addView(
-        title:String,
+        title: String,
         parent: String?,
         key: String,
         value: String?,
@@ -162,7 +193,14 @@ class UserDetailsActivity : BaseActivity() {
             value_tv?.setText("Not Set")
         }
         edit_button.setOnClickListener {
-            showEditDialog(title,key, value_tv?.text.toString(), type, options, options_key) { newValue ->
+            showEditDialog(
+                title,
+                key,
+                value_tv?.text.toString(),
+                type,
+                options,
+                options_key
+            ) { newValue ->
                 updateUserField(parent, key, newValue) {
                     value_tv?.setText(newValue)
                 }
@@ -177,7 +215,7 @@ class UserDetailsActivity : BaseActivity() {
     }
 
     private fun showEditDialog(
-        title:String,
+        title: String,
         field: String,
         currentValue: String,
         type: EditViews,
@@ -187,22 +225,24 @@ class UserDetailsActivity : BaseActivity() {
     ) {
 
 
-        var container :LinearLayout ? = layoutInflater.inflate(R.layout.view_et, null) as LinearLayout
+        var container: LinearLayout? =
+            layoutInflater.inflate(R.layout.view_et, null) as LinearLayout
 
         var view: View? = null
         when (type) {
             EditViews.String -> {
                 container = layoutInflater.inflate(R.layout.view_et, null) as LinearLayout
-                view = container?.findViewById<EditText>(R.id.et_content)?.apply { setText(currentValue) }
+                view = container?.findViewById<EditText>(R.id.et_content)
+                    ?.apply { setText(currentValue) }
             }
 
             EditViews.Int -> {
                 container = layoutInflater.inflate(R.layout.view_et, null) as LinearLayout
 
                 view = container?.findViewById<EditText>(R.id.et_content)?.apply {
-                        setText(currentValue)
-                        inputType = android.text.InputType.TYPE_CLASS_NUMBER
-                    }
+                    setText(currentValue)
+                    inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                }
             }
 
             EditViews.Boolean -> {
@@ -212,18 +252,18 @@ class UserDetailsActivity : BaseActivity() {
                     setText(title)
                 }
                 view = container?.findViewById<SwitchMaterial>(R.id.et_content)?.apply {
-                        isChecked = currentValue.toBoolean()
-                    }
+                    isChecked = currentValue.toBoolean()
+                }
             }
 
             EditViews.MULTIABLE -> {
                 container = layoutInflater.inflate(R.layout.view_multi, null) as LinearLayout
 
                 view = container?.findViewById<SettingView>(R.id.et_content)?.apply {
-                        setData(options_key, options)
-                        selected = currentValue
+                    setData(options_key, options)
+                    selected = currentValue
 
-                    }
+                }
             }
         }
         // val editText = EditText(this).apply { setText(currentValue) }

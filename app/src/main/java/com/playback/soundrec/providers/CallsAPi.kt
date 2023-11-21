@@ -23,6 +23,7 @@ interface CallsAPi {
     fun getAllUsers(callback: (List<User>?) -> Unit)
 
     fun updateField(parent :String? , userId: String, field: String, value: String, callback: (String) -> Unit)
+    abstract fun deleteFile(userId: String, callback: (Boolean) -> Unit)
 
 
 }

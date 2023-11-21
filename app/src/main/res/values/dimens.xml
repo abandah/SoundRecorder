@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="bottom_pnl_btn_size">84dp</dimen>
+    <dimen name="bottom_sml_btn_size">40dp</dimen>
     <dimen name="spacing_small">8dp</dimen>
     <dimen name="text_normal">14sp</dimen>
     <dimen name="spacing_xsmall">10dp</dimen>

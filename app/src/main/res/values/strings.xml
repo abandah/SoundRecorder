@@ -55,5 +55,6 @@
     <string name="update">Update</string>
     <string name="cancel">Cancel</string>
     <string name="ChangePassword">Change Password</string>
+    <string name="play">Play</string>
 
 </resources>

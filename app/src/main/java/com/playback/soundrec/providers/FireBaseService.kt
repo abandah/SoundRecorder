@@ -1,6 +1,7 @@
 package com.playback.soundrec.providers
 
 import android.net.Uri
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -73,8 +74,8 @@ class FireBaseService :CallsAPi {
     override fun uploadFile(userId: String, file: File, callback: (Boolean) -> Unit) {
         // refrence to the node of user
 
-        val audioFileRef = storage.child("audio/$userId/sample.aac")
-        storage.child("audio/$userId").delete().addOnCompleteListener(){
+        val audioFileRef = storage.child("audio/$userId/sample.wav")
+        audioFileRef.delete().addOnCompleteListener(){
             val fileUri = Uri.fromFile(file)
 
             audioFileRef.putFile(fileUri).addOnSuccessListener {
@@ -82,6 +83,7 @@ class FireBaseService :CallsAPi {
                     callback(success)
                 }
             }.addOnFailureListener {
+                Log.e("TAGTAG", "uploadFile: ", it)
                 callback(false)
             }
         }
@@ -110,10 +112,10 @@ class FireBaseService :CallsAPi {
 
     override fun getFile(userId: String, callback: (File?) -> Unit) {
         // Create a reference to the file you want to download
-        val audioFileRef = storage.child("audio/$userId/sample.aac")
+        val audioFileRef = storage.child("audio/$userId/sample.wav")
 
         // Create a local file where the downloaded file will be stored
-        val localFile = File.createTempFile("downloaded_audio", ".aac", App.Companion.context?.cacheDir)
+        val localFile = File.createTempFile("sample", ".aac", App.Companion.context?.cacheDir)
 
         // Download the file to the local file
         audioFileRef?.getFile(localFile)
@@ -218,6 +220,20 @@ class FireBaseService :CallsAPi {
                 callback(value.toString())
             }
 
+    }
+
+    override fun deleteFile(userId: String, callback: (Boolean) -> Unit) {
+        // Create a reference to the file to delete
+        val audioFileRef = storage.child("audio/$userId/sample.wav")
+
+        // Delete the file
+        audioFileRef.delete().addOnSuccessListener {
+            // File deleted successfully
+            callback(true)
+        }.addOnFailureListener {
+            // Uh-oh, an error occurred!
+            callback(false)
+        }
     }
 
 //    override fun updateUserField(

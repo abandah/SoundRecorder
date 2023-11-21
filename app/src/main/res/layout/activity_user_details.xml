@@ -53,6 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/spacing_normal"
                 android:orientation="vertical">
+
                 <TextView
                     style="@style/Text.SectionLabel"
                     android:layout_width="wrap_content"
@@ -64,9 +65,10 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="5dp"
                     android:shadowColor="@color/white"
-                    app:cardBackgroundColor="@android:color/transparent">
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="5dp">
+
                     <LinearLayout
                         android:id="@+id/ll_userDetails"
                         android:layout_width="match_parent"
@@ -79,17 +81,18 @@
                     style="@style/Text.SectionLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
                     android:layout_marginTop="@dimen/spacing_double"
+                    android:layout_weight="2"
                     android:gravity="start|center_vertical"
                     android:text="Settings" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="5dp"
                     android:shadowColor="@color/white"
-                    app:cardBackgroundColor="@android:color/transparent">
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="5dp">
+
                     <LinearLayout
                         android:id="@+id/ll_settings"
                         android:layout_width="match_parent"
@@ -97,26 +100,61 @@
                         android:orientation="vertical" />
                 </com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                    android:id="@+id/tvSoundSample"
-                    style="@style/Text.SectionLabel"
-                    android:visibility="gone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:layout_marginTop="@dimen/spacing_double"
-                    android:gravity="start|center_vertical"
-                    android:text="Sound Sample" />
-                <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                    android:layout_width="wrap_content"
-                    android:visibility="invisible"
-                    android:id="@+id/btnPlaySample"
-                    android:layout_gravity="center"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/spacing_normal"
-                    android:text="Play Sample"
-                    android:layout_marginBottom="@dimen/spacing_huge"/>
+                <LinearLayout
+                    android:id="@+id/ll_soundSample"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="invisible">
 
+                    <TextView
+                        style="@style/Text.SectionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/spacing_double"
+                        android:layout_weight="2"
+                        android:gravity="start|center_vertical"
+                        android:text="Sound Sample"
+                        android:visibility="visible" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_huge"
+                        android:gravity="center"
+
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatImageButton
+                            android:id="@+id/btnPlaySample"
+                            android:layout_width="@dimen/bottom_sml_btn_size"
+                            android:layout_height="@dimen/bottom_sml_btn_size"
+                            android:background="?android:selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_play"
+                            android:tint="@color/white"
+                            android:layout_marginEnd="@dimen/spacing_normal"/>
+
+                        <androidx.appcompat.widget.AppCompatImageButton
+                            android:id="@+id/btnStopSample"
+                            android:layout_width="@dimen/bottom_sml_btn_size"
+                            android:layout_height="@dimen/bottom_sml_btn_size"
+                            android:background="?android:selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_stop"
+                            android:layout_marginEnd="@dimen/spacing_normal"
+                            android:tint="@color/white" />
+
+                        <androidx.appcompat.widget.AppCompatImageButton
+                            android:id="@+id/btnDeleteSample"
+                            android:layout_width="@dimen/bottom_sml_btn_size"
+                            android:layout_height="@dimen/bottom_sml_btn_size"
+                            android:background="?android:selectableItemBackgroundBorderless"
+                            android:src="@drawable/baseline_delete_forever_24"
+                            android:tint="@color/white" />
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
 
             </LinearLayout>
