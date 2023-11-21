@@ -144,8 +144,8 @@ class UserDetailsActivity : BaseActivity() {
                 }
 
                 binding.btnPlaySample?.setOnClickListener() {
-                    mediaPlayer?.pause()
-                    mediaPlayer?.seekTo(0)
+                  //  mediaPlayer?.pause()
+                 //   mediaPlayer?.seekTo(0)
                     mediaPlayer?.start()
 
                 }
