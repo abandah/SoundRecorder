@@ -52,7 +52,7 @@ class UserListActivity : BaseActivity() {
         usernameEditText.setText( "m3bndah@gmail.com")
         passwordEditText.setText( "123456789")
 
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, R.style.MyDialogTheme)
             .setView(dialogView)
             .setTitle("Create New User")
             .setPositiveButton("Create") { dialog, _ ->
